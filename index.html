@@ -1,0 +1,301 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="styles.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div id="devtrac">
+
+        <div class="devtrac--map">
+            <div id="devtrac--mapbox"></div>
+        </div>
+
+        <div class="devtrac--legend animated">
+            <span class="legend--status status--proposed"><span class="legend--circle"></span>Proposed</span>
+            <span class="legend--status status--underConstruction"><span class="legend--circle"></span>Under construction</span>
+            <span class="legend--status status--approved"><span class="legend--circle"></span>Approved</span>
+            <span class="legend--status status--contructionComplete"><span class="legend--circle"></span>Construction complete</span>
+        </div>
+
+        <div class="devtrac--fullscreen pointer">
+            <i class="fa fa-arrows-alt" onclick="toggleFullScreen();"></i>
+        </div>
+
+        <div class="devtrac--filterbox animated">
+            <div class="filterbox--inner">
+
+                <h1 class="filterbox--title pointer" onclick="toggleFilterBox();">Filter developments<i class="fa fa-caret-down animated"></i></h1>
+
+                <form>
+                    <div class="filterbox--inputwrapper">
+                        <input type="text" name="search" placeholder="Search project name or address">
+                    </div>
+
+                    <div class="filterbox--inputwrapper">
+                        <p class="filterbox--header">Usage</p>
+                        <div class="inputwrapper--twocol">
+                            <label class="inputwrapper--label">
+                                <input type="checkbox" name="usageCommercial">
+                                Commercial
+                            </label>
+                            <br>
+                            <label class="inputwrapper--label">
+                                <input type="checkbox" name="usageResidential">
+                                Residential
+                            </label>
+                        </div>
+                        <div class="inputwrapper--twocol">
+                            <label class="inputwrapper--label">
+                                <input type="checkbox" name="usageManufacturing">
+                                Manufacturing
+                            </label>
+                            <br>
+                            <label class="inputwrapper--label">
+                                <input type="checkbox" name="usageMixed">
+                                Mixed
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filterbox--inputwrapper">
+                        <p class="filterbox--header">Project Status</p>
+                        <div class="inputwrapper--twocol">
+                            <label class="inputwrapper--label">
+                                <input type="checkbox" name="statusProposed">
+                                Proposed
+                            </label>
+                        </div>
+                        <div class="inputwrapper--twocol">
+                            <label class="inputwrapper--label">
+                                <input type="checkbox" name="statusApproved">
+                                Approved
+                            </label>
+                        </div>
+                        <br>
+                        <label class="inputwrapper--label">
+                            <input type="checkbox" name="statusUnderConstruction">
+                            Under Construction
+                        </label>
+                        <br>
+                        <label class="inputwrapper--label">
+                            <input type="checkbox" name="statusConstructionComplete">
+                            Construction Completed
+                        </label>
+                    </div>
+
+                    <div class="filterbox--inputwrapper">
+                        <select name="neighborhood">
+                            <option value="" data-center="[lon,lat,zoom]">All Neighborhoods</option>
+                        </select>
+                    </div>
+
+                    <div class="filterbox--inputwrapper">
+                        <select name="developers">
+                            <option value="">All Developers</option>
+                        </select>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <div class="devtrac--infobox infobox--hidden animated">
+            <div class="infobox--outer"><div class="infobox--inner"></div></div>
+            <i class="fa fa-times-circle pointer"></i>
+        </div>
+
+        <div class="devtrac--touch" onclick="toggleFullScreen();">
+            <div class="touch--wrapper">
+                <i class="fa fa-hand-pointer-o"></i>
+                <br>
+                Touch to interact
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    var markers = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+               "type": "Feature",
+               "properties": {
+                   "name": "Milwaukee Bucks Arena",
+                   "address": "1111 N. 4th St.",
+                   "usage": "commerical",
+                   "constructionType": "new",
+                   "status": "proposed",
+                   "developer": "Head of the Heard/Milwaukee Bucks",
+                   "architect": "Populous",
+                   "cost": "500,000,000",
+                   "completionDate": "Sept. 2018",
+                   "neighborhood": "Downtown",
+                   "description": "The new Milwaukee Bucks arena will replace the current BMO Harris Bradley Center, which will be demolished once the new facility is completed. The project includes a new parking structure, to be developed just north of the new arena, at N. 6th St. and W. Juneau Ave.",
+                   "image": "http://brick1.dhb.io/media/images/ARENA1.JPG",
+                   "coverage": [
+                       {
+                           "headline": "A sneak peek at Milwaukee arena designs",
+                           "url": "http://www.jsonline.com/entertainment/arts/new-bucks-arena-design-calls-for-arcing-roof-tall-sheets-of-glass-b99688713z1-372301321.html"
+                       }
+                   ]
+               },
+               "geometry": {
+                   "type": "Point",
+                   "coordinates": [-87.907703, 43.074756]
+               }
+            }
+        ]
+    };
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
+    var map = new mapboxgl.Map({
+        container: 'devtrac--mapbox',
+        style: 'mapbox://styles/milwaukeejournalsentinel/cilwqkvux004d9mm3ykk9br7n',
+        scrollZoom: false,
+        boxoom: false,
+        dragRotate: false,
+        touchZoomRotate: false,
+        center: [-87.9800,43.0500],
+        zoom: 10,
+    });
+    map.addControl(new mapboxgl.Navigation({position: 'top-right'}));
+
+
+    map.on('style.load', function () {
+
+        map.addSource("markers", {
+            "type": "geojson",
+            "data": markers
+        });
+
+        map.addLayer({
+            "id": "markers",
+            "interactive": true,
+            "source": "markers",
+            "type": "circle",
+            "paint": {
+                "circle-radius": 8,
+                "circle-color": "#25A55F",
+                "circle-opacity": .75
+            }
+        });
+
+    });
+
+    map.on('click', function (e) {
+        map.featuresAt(e.point, {
+            radius: 8,
+            includeGeometry: true,
+            layer: 'markers'
+        }, function (err, features) {
+
+            if (err || !features.length) {
+                toggleInfoBox();
+                return;
+            }
+
+            var feature = features[0];
+
+            toggleInfoBox(feature.properties);
+
+        });
+    });
+
+    map.on('mousemove', function (e) {
+        map.featuresAt(e.point, {
+            radius: 8,
+            layer: 'markers'
+        }, function (err, features) {
+            map.getCanvas().style.cursor = (!err && features.length) ? 'pointer' : '';
+        });
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function() {
+        if ($(window).width() < 621) {
+            $('.devtrac--filterbox').addClass('filterbox--hidden');
+        }
+    });
+
+    function toggleFullScreen() {
+        if ($('.container').hasClass('container--fullscreen')) {
+
+            if ($(window).width() < 621) {
+                $('.devtrac--touch').show();
+            } else {
+                $(document).unbind('keyup.fullscreen');
+            }
+
+            map.scrollZoom.disable();
+
+        } else {
+
+            if ($(window).width() < 621) {
+                $('.devtrac--touch').hide();
+            } else {
+                $(document).on('keyup.fullscreen',function(evt) {
+                    if (evt.keyCode == 27) {
+                       toggleFullScreen();
+                    }
+                });
+            }
+
+            map.scrollZoom.enable();
+
+        }
+        $('.container').toggleClass('container--fullscreen');
+        map.resize();
+    }
+
+    function toggleInfoBox(data) {
+        if (data) {
+
+            var html = '' +
+                '<div class="infobox--imagewrap"><img class="imagewrap--image" src="' + data.image + '"><span class="imagewrap--status">' + data.status + '</span></div>' +
+                '<div class="infobox--details">' +
+                    '<span class="details--estimates"><strong>Completion: </strong>' + data.completionDate + '<br><strong>Cost: </strong>$' + data.cost + '</span>' +
+                    '<h3 class="details--name">' + data.name + '</h3>' +
+                    '<p class="details--location">' + data.address + ' &mdash; ' + data.neighborhood + '</p>' +
+                    '<p class="details--desc">' + data.description + '</p>' +
+                    '<p class="details--who"><span class="details--developer"><strong>Developer: </strong>' + data.developer + '</span><span class="details--architect"><strong>Architect: </strong>' + data.architect + '</strong></span></p>'+
+                    '<p class="details--coverage"><strong>Coverage: </strong><span class="coverage--bullet">•</span><a class="coverage--link" href="' + data.coverage[0].url + '">' + data.coverage[0].headline + '</a></p>' +
+                '</div>'+
+                '';
+
+            $('.devtrac--infobox .infobox--inner').html(html);
+            $('.devtrac--infobox').removeClass('infobox--hidden');
+
+            $('.fa-times-circle').on('click',function() {
+               toggleInfoBox();
+            });
+
+        } else {
+            $('.devtrac--infobox .infobox--inner').html('');
+            $('.devtrac--infobox').addClass('infobox--hidden');
+
+            $('.fa-times-circle').unbind('click');
+        }
+    }
+
+    function toggleFilterBox() {
+        $('.devtrac--filterbox').toggleClass('filterbox--hidden');
+    }
+
+</script>
+</body>
+</html>
