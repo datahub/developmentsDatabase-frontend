@@ -214,6 +214,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         }
 
     }
+<<<<<<< HEAD
 
     .filters--status{
         /*** custom checkboxes ***/
@@ -241,31 +242,64 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             -ms-transition: all 0.15s;
             -o-transition: all 0.15s;
             transition: all 0.15s;
+=======
+    .filters--usage{
+        /* custom checkboxes */
+        input[type=checkbox] { 
+            -webkit-appearance:none;
+            -moz-appearance:none; 
+            outline: none; 
+            font-size: 20px;
+            position: relative;
+            top: 3px;
+>>>>>>> 624847f3232cb7d612018c92c5196dc5a7781676
         }
-
-        input[type=checkbox]:focus{
-            border-color: #ACACB8;
-            color: #2E3236;
-            -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18)!important;
-            -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18)!important;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18)!important;
+        /* unchecked icon */
+        input[type=checkbox]:before {
+            font-family: FontAwesome;
+            display: inline-block;
+            content: "\f096"; 
         }
-        label{
-            line-height: 25px;
-            vertical-align: middle;
+        /* checked icon */
+        input[type=checkbox]:checked:before { 
+            content: "\f046"; 
+        } 
+        input[type=checkbox].proposed:before {
+            color: #222;
         }
-
-        input[type=checkbox].proposed:checked {
-            background-color: $red;
+    }
+    .filters--status{
+        
+        /* custom checkboxes */
+        input[type=checkbox] { 
+            -webkit-appearance:none;
+            -moz-appearance:none; 
+            outline: none; 
+            font-size: 20px;
+            position: relative;
+            top: 3px;
         }
-        input[type=checkbox].approved:checked {
-            background-color: $yellow;
+        /* unchecked icon */
+        input[type=checkbox]:before {
+            font-family: FontAwesome;
+            display: inline-block;
+            content: "\f096"; 
         }
-        input[type=checkbox].under:checked {
-            background-color: $blue;
+        /* checked icon */
+        input[type=checkbox]:checked:before { 
+            content: "\f046"; 
+        } 
+        input[type=checkbox].proposed:before {
+            color: $red;
         }
-        input[type=checkbox].completed:checked {
-            background-color: $green;
+        input[type=checkbox].approved:before {
+            color: $yellow;
+        }
+        input[type=checkbox].under:before {
+            color: $blue;
+        }
+        input[type=checkbox].completed:before {
+            color: $green;
         }
     }
 
