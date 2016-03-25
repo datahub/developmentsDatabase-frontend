@@ -11,7 +11,7 @@ git clone [repo url]
 
 Get latest version of code
 ```
-git clone [repo url]
+git pull
 ```
 
 Create new branch to do work in
