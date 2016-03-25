@@ -166,6 +166,49 @@
       border-radius: 0;
       font-size: 14px;
       line-height: 16px; }
+  .devtrac--filterbox .filters--status {
+    /*** custom checkboxes ***/ }
+    .devtrac--filterbox .filters--status input[type="checkbox"] {
+      margin: 0;
+      padding: 0;
+      vertical-align: middle;
+      top: -2px;
+      position: relative;
+      height: 15px;
+      width: 15px;
+      border: 1px solid #d5d5d6;
+      outline: none;
+      color: #96999D;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      -webkit-appearance: none;
+      -webkit-font-smoothing: antialiased;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+      -webkit-transition: all 0.15s;
+      -moz-transition: all 0.15s;
+      -ms-transition: all 0.15s;
+      -o-transition: all 0.15s;
+      transition: all 0.15s; }
+    .devtrac--filterbox .filters--status input[type=checkbox]:focus {
+      border-color: #ACACB8;
+      color: #2E3236;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18) !important;
+      -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18) !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18) !important; }
+    .devtrac--filterbox .filters--status label {
+      line-height: 25px;
+      vertical-align: middle; }
+    .devtrac--filterbox .filters--status input[type=checkbox].proposed:checked {
+      background-color: #FF7676; }
+    .devtrac--filterbox .filters--status input[type=checkbox].approved:checked {
+      background-color: #F6C90E; }
+    .devtrac--filterbox .filters--status input[type=checkbox].under:checked {
+      background-color: #466C95; }
+    .devtrac--filterbox .filters--status input[type=checkbox].completed:checked {
+      background-color: #5DAE8B; }
 
 .devtrac--filterbox:hover {
   background: white; }
