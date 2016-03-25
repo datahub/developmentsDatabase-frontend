@@ -114,7 +114,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     .status--underConstruction .legend--circle {
         background: $blue;
     }
-    .status--contructionComplete .legend--circle {
+    .status--contructionCompleted .legend--circle {
         background: $green;
     }
 
@@ -212,12 +212,12 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             font-size: 14px;
             line-height: 16px;
         }
- 
+
     }
 
     .filters--status{
         /*** custom checkboxes ***/
-        input[type="checkbox"] { 
+        input[type="checkbox"] {
             margin: 0;
             padding: 0;
             vertical-align: middle;
@@ -230,7 +230,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             color:#96999D;
             -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);        
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             -webkit-appearance: none;
             -webkit-font-smoothing: antialiased;
             -webkit-border-radius: 2px;
@@ -240,7 +240,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             -moz-transition: all 0.15s;
             -ms-transition: all 0.15s;
             -o-transition: all 0.15s;
-            transition: all 0.15s;          
+            transition: all 0.15s;
         }
 
         input[type=checkbox]:focus{
@@ -314,11 +314,26 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 bottom: -10px;
                 left: -10px;
                 width: 100%;
-                background: rgba(93, 174, 139,.8);
-                color: #fff;
                 padding: 2px 0px;
                 text-align: center;
                 font-size: 14px;
+            }
+
+            .status--proposed {
+                background: $red;
+                color: #fff;
+            }
+            .status--approved {
+                background: $yellow;
+                color: #fff;
+            }
+            .status--under-construction {
+                background: $blue;
+                color: #fff;
+            }
+            .status--construction-completed {
+                background: $green;
+                color: #fff;
             }
 
             .imagewrap--image {

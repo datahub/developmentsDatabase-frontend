@@ -21,7 +21,7 @@
                 <span class="legend--status status--proposed"><span class="legend--circle"></span>Proposed</span>
                 <span class="legend--status status--approved"><span class="legend--circle"></span>Approved</span>
                 <span class="legend--status status--underConstruction"><span class="legend--circle"></span>Under construction</span>
-                <span class="legend--status status--contructionComplete"><span class="legend--circle"></span>Construction complete</span>
+                <span class="legend--status status--contructionCompleted"><span class="legend--circle"></span>Construction completed</span>
             </div>
 
             <div class="devtrac--fullscreen pointer">
@@ -85,7 +85,7 @@
                             </label>
                             <br>
                             <label class="inputwrapper--label">
-                                <input type="checkbox" class="completed" name="statusConstructionComplete">
+                                <input type="checkbox" class="completed" name="statusConstructionCompleted">
                                 Construction Completed
                             </label>
                         </div>
@@ -135,7 +135,7 @@
     <script type="text/template" id="template--infobox">
         <% if (image !== "") { %>
         <div class="infobox--imagewrap">
-            <img class="imagewrap--image" src="<%= image %>"><span class="imagewrap--status"><%= statusNice %></span>
+            <img class="imagewrap--image" src="<%= image %>"><span class="imagewrap--status status--<%= status %>"><%= statusNice %></span>
         </div>
         <% } %>
         <div class="infobox--details">
@@ -144,14 +144,14 @@
             <p class="details--location"><%= address %> &mdash; <%= neighborhood %></p>
             <p class="details--desc"><%= description %></p>
             <p class="details--who">
-                <% if (developer !== "") { %><span class="details--developer"><strong>Developer: </strong><%= developer %></span><% } %>
-                <% if (architect !== "") { %><span class="details--architect"><strong>Architect: </strong><%= architect %></span><% } %>
+                <% if (developer) { %><span class="details--developer"><strong>Developer: </strong><%= developer %></span><% } %>
+                <% if (architect) { %><span class="details--architect"><strong>Architect: </strong><%= architect %></span><% } %>
             </p>
             <p class="details--coverage">
                 <strong>Coverage: </strong>
                 <% _forEach(coverage, function(cvg) {  %>
                     <span class="coverage--bullet">•</span><a class="coverage--link" href="<% cvg.url %>"><% cvg.title %></a>
-                <% } %>
+                <% }); %>
             </p>
         </div>
     </script>

@@ -86,7 +86,7 @@
     background: #F6C90E; }
   .devtrac--legend .status--underConstruction .legend--circle {
     background: #466C95; }
-  .devtrac--legend .status--contructionComplete .legend--circle {
+  .devtrac--legend .status--contructionCompleted .legend--circle {
     background: #5DAE8B; }
 
 @media screen and (max-width: 875px) {
@@ -245,11 +245,21 @@
         bottom: -10px;
         left: -10px;
         width: 100%;
-        background: rgba(93, 174, 139, 0.8);
-        color: #fff;
         padding: 2px 0px;
         text-align: center;
         font-size: 14px; }
+      .devtrac--infobox .infobox--inner .infobox--imagewrap .status--proposed {
+        background: #FF7676;
+        color: #fff; }
+      .devtrac--infobox .infobox--inner .infobox--imagewrap .status--approved {
+        background: #F6C90E;
+        color: #fff; }
+      .devtrac--infobox .infobox--inner .infobox--imagewrap .status--under-construction {
+        background: #466C95;
+        color: #fff; }
+      .devtrac--infobox .infobox--inner .infobox--imagewrap .status--construction-completed {
+        background: #5DAE8B;
+        color: #fff; }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--image {
         display: block;
         height: 170px;
