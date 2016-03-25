@@ -92,6 +92,7 @@
 @media screen and (max-width: 875px) {
   .devtrac--legend {
     width: 180px; } }
+
 .devtrac--legend:hover {
   background: white; }
 
@@ -273,17 +274,14 @@
   #devtrac--mapbox {
     height: 300px;
     width: 100%; }
-
   .devtrac--legend {
     display: none; }
-
   .devtrac--filterbox {
     width: 236px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; }
     .devtrac--filterbox .filterbox--inputwrapper {
       font-size: 12px; }
-
   .devtrac--infobox {
     height: initial;
     max-height: 96%;
@@ -311,11 +309,9 @@
       margin-right: 0; }
     .devtrac--infobox .infobox--inner .infobox--details .details--architect {
       display: block; }
-
   .infobox--hidden {
     transform: translateY(200%);
     bottom: 0; }
-
   .devtrac--touch {
     display: block;
     position: absolute;
@@ -341,4 +337,4 @@
         line-height: 50px;
         margin-bottom: 15px; } }
 
-/*# sourceMappingURL=styles.css.map */
+/*# sourceMappingURL=styles.css.map*/

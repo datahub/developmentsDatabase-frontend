@@ -1,0 +1,27 @@
+{
+  "name": "daykin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "extract-text-webpack-plugin": "^1.0.1",
+    "jquery": "^2.2.2",
+    "lodash": "^4.6.1"
+  },
+  "devDependencies": {
+    "css-loader": "^0.23.1",
+    "node-sass": "^3.4.2",
+    "sass-loader": "^3.2.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.12.14"
+  },
+  "scripts": {
+    "start": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datahub/devtracker-ui.git"
+  },
+  "author": "datahub",
+  "license": ""
+}

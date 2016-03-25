@@ -25,13 +25,13 @@
             </div>
 
             <div class="devtrac--fullscreen pointer">
-                <i class="fa fa-arrows-alt" onclick="toggleFullScreen();"></i>
+                <i class="fa fa-arrows-alt toggleFullScreen"></i>
             </div>
 
             <div class="devtrac--filterbox animated">
                 <div class="filterbox--inner">
 
-                    <h1 class="filterbox--title pointer" onclick="toggleFilterBox();">Filter developments<i class="fa fa-caret-down animated"></i></h1>
+                    <h1 class="filterbox--title pointer toggleFilterBox">Filter developments<i class="fa fa-caret-down animated"></i></h1>
 
                     <form>
                         <div class="filterbox--inputwrapper">
@@ -112,7 +112,7 @@
                 <i class="fa fa-times-circle pointer"></i>
             </div>
 
-            <div class="devtrac--touch" onclick="toggleFullScreen();">
+            <div class="devtrac--touch toggleFullScreen">
                 <div class="touch--wrapper">
                     <i class="fa fa-hand-pointer-o"></i>
                     <br>
@@ -123,36 +123,36 @@
         </div>
     </div>
     <script type="text/template" id="template--neighborhoods">
-        <% _.forEach(neighborhoods, function(neighborhood) { %>
+        <% _forEach(neighborhoods, function(neighborhood) { %>
             <option value="<%= neighborhood %>" data-center="[lon,lat,zoom]"><%= neighborhood %></option>
         <% }); %>
     </script>
     <script type="text/template" id="template--developers">
-        <% _.forEach(developers, function(developer) { %>
+        <% _forEach(developers, function(developer) { %>
             <option value="<%= developer %>"><%= developer %></option>
         <% }); %>
     </script>
     <script type="text/template" id="template--infobox">
+        <% if (image !== "") { %>
         <div class="infobox--imagewrap">
-            <img class="imagewrap--image" src="<%= image %>"><span class="imagewrap--status"><%= status %></span>
+            <img class="imagewrap--image" src="<%= image %>"><span class="imagewrap--status"><%= statusNice %></span>
         </div>
+        <% } %>
         <div class="infobox--details">
-            <span class="details--estimates"><strong>Completion: </strong><%= completionDate %><br><strong>Cost: </strong>$<%= cost %></span>
+            <span class="details--estimates"><strong>Completion: </strong><%= completionDate %><br><strong>Cost: </strong><%= cost %></span>
             <h3 class="details--name"><%= name %></h3>
             <p class="details--location"><%= address %> &mdash; <%= neighborhood %></p>
             <p class="details--desc"><%= description %></p>
             <p class="details--who">
-                <span class="details--developer"><strong>Developer: </strong><%= developer %></span>
-                <span class="details--architect"><strong>Architect: </strong><%= architect %></strong></span>
+                <% if (developer !== "") { %><span class="details--developer"><strong>Developer: </strong><%= developer %></span><% } %>
+                <% if (architect !== "") { %><span class="details--architect"><strong>Architect: </strong><%= architect %></span><% } %>
             </p>
             <p class="details--coverage">
                 <strong>Coverage: </strong>
-                <span class="coverage--bullet">•</span><a class="coverage--link" href="<%= coverage[0].url %>"><%= coverage[0].headline %></a>
+                <!-- <span class="coverage--bullet">•</span><a class="coverage--link" href=""></a> -->
             </p>
         </div>
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="js/lodash.min.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/bundle.js"></script>
 </body>
 </html>

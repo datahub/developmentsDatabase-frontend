@@ -1,6 +1,11 @@
+require("../css/styles.scss");
+
+var $ = require("jquery");
+var tpl = require("lodash/template");
+window._forEach = require('lodash/foreach');
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
-var map = new mapboxgl.Map({
+window.map = new mapboxgl.Map({
     container: 'devtrac--mapbox',
     style: 'mapbox://styles/milwaukeejournalsentinel/cilwqkvux004d9mm3ykk9br7n',
     scrollZoom: false,
@@ -8,16 +13,16 @@ var map = new mapboxgl.Map({
     dragRotate: false,
     center: [-87.9800,43.0500],
     zoom: 10,
-    maxBounds: [[-89.393005,42.495264],[-87.723083,43.754109]],
+    maxBounds: [[-89.593005,42.195264],[-87.223083,43.954109]],
 });
 map.addControl(new mapboxgl.Navigation({position: 'top-right'}));
 
-/*
+
 map.on('click', function (e) {
     map.featuresAt(e.point, {
         radius: 8,
         includeGeometry: true,
-        layer: 'markers'
+        layer: ['approved','proposed','under-construction','construction-completed']
     }, function (err, features) {
 
         if (err || !features.length) {
@@ -31,7 +36,8 @@ map.on('click', function (e) {
 
     });
 });
-*/
+
+
 map.on('style.load', function () {
 
     $.ajax({
@@ -50,7 +56,7 @@ map.on('style.load', function () {
 map.on('mousemove', function (e) {
     map.featuresAt(e.point, {
         radius: 8,
-        layer: 'markers'
+        layer: ['approved','proposed','under-construction','construction-completed']
     }, function (err, features) {
         map.getCanvas().style.cursor = (!err && features.length) ? 'pointer' : '';
     });
@@ -66,12 +72,12 @@ $(document).ready(function() {
 
 function populateFilters(meta) {
     if (meta.developers.length > 0) {
-        var developersTpl = _.template($('#template--developers').html());
+        var developersTpl = tpl($('#template--developers').html());
         var dhtml = developersTpl({'developers': meta.developers});
         $('.holder--developers').append(dhtml);
     }
     if (meta.neighborhoods.length > 0) {
-        var neighborhoodsTpl = _.template($('#template--neighborhoods').html());
+        var neighborhoodsTpl = tpl($('#template--neighborhoods').html());
         var nhtml = neighborhoodsTpl({'neighborhoods': meta.neighborhoods});
         $('.holder--neighborhoods').append(nhtml);
     }
@@ -112,7 +118,7 @@ function populateMap(markers) {
 
 }
 
-function toggleFullScreen() {
+var toggleFullScreen = function() {
     if ($('.container').hasClass('container--fullscreen')) {
 
         if ($(window).width() < 621) {
@@ -141,11 +147,12 @@ function toggleFullScreen() {
     $('.container').toggleClass('container--fullscreen');
     map.resize();
 }
+$('.toggleFullScreen').on('click',function(){toggleFullScreen()});
 
-function toggleInfoBox(data) {
+var toggleInfoBox = function(data) {
     if (data) {
 
-        var infoboxTpl = _.template($('#template--infobox').html());
+        var infoboxTpl = tpl($('#template--infobox').html());
         var html = infoboxTpl(data);
 
         $('.devtrac--infobox .infobox--inner').html(html);
@@ -165,6 +172,7 @@ function toggleInfoBox(data) {
     }
 }
 
-function toggleFilterBox() {
+var toggleFilterBox = function() {
     $('.devtrac--filterbox').toggleClass('filterbox--hidden');
 }
+$('.toggleFilterBox').on('click',function(){toggleFilterBox()});

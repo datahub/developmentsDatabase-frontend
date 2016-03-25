@@ -1,22 +1,37 @@
 ## devtracker-ui
-Front-end of the Daykin's Development Tracker
-Git project
+Front-end of Daykin's Development Tracker
+
+Open a console session in the project folder:
+
+Get project for first time
 ```
-git clone or git pull
+git clone [repo url]
 ```
+-OR-
+
+Get latest version of code
+```
+git clone [repo url]
+```
+
 Create new branch to do work in
 ```
 git checkout -b [branch name]
 ```
-Tell sass to compile on style sheet saves
+Launch the dev environment
 ```
-sass --watch css/styles.scss:css/styles.css
+npm start
 ```
+---
 #DO WORK
-control + c to quit sass watching
+
+*control + c to quit working*
+
+---
+
 Commit changes
 ```
-git commit -m ["describe work"]
+git commit -m "[describe work]"
 ```
 Switch to original branch
 ```
@@ -29,4 +44,9 @@ git merge [branch name]
 Make changes available to everyone
 ```
 git push
+```
+---
+Also: running the code below will build for production
+```
+webpack -p
 ```
