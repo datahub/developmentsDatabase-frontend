@@ -33,7 +33,7 @@
 
                     <h1 class="filterbox--title pointer toggleFilterBox">Filter developments<i class="fa fa-caret-down animated"></i></h1>
 
-                    <form>
+                    <form id="devtrac--form">
                         <div class="filterbox--inputwrapper">
                             <input type="text" name="search" placeholder="Search project name or address">
                         </div>
@@ -80,12 +80,12 @@
                             </div>
                             <br>
                             <label class="inputwrapper--label">
-                                <input type="checkbox" class="under" name="under-construction" checked="checked">
+                                <input type="checkbox" class="under" name="underConstruction" checked="checked">
                                 Under Construction
                             </label>
                             <br>
                             <label class="inputwrapper--label">
-                                <input type="checkbox" class="completed" name="construction-completed" checked="checked">
+                                <input type="checkbox" class="completed" name="constructionCompleted" checked="checked">
                                 Construction Completed
                             </label>
                         </div>
@@ -97,7 +97,7 @@
                         </div>
 
                         <div class="filterbox--inputwrapper">
-                            <select name="developers" class="holder--developers">
+                            <select name="developer" class="holder--developers">
                                 <option value="">All Developers</option>
                             </select>
                         </div>

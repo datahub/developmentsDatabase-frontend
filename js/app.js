@@ -1,7 +1,8 @@
 require("../css/styles.scss");
 
-var $ = require("jquery");
-var tpl = require("lodash/template");
+window.$ = require("jquery");
+var _tpl = require("lodash/template");
+var _filter = require("lodash/filter");
 window._forEach = require('lodash/foreach');
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
@@ -17,8 +18,24 @@ window.map = new mapboxgl.Map({
 });
 map.addControl(new mapboxgl.Navigation({position: 'top-right'}));
 
+map.on('style.load', function () {
+
+    $.ajax({
+        url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+        jsonpCallback: 'preData',
+        dataType: 'jsonp',
+        crossDomain: true,
+        success: function(data) {
+            populateFilters(data.meta);
+            populateMap(data.locations);
+            window.devtracPoints = data.locations
+        }
+    });
+
+});
 
 map.on('click', function (e) {
+
     map.featuresAt(e.point, {
         radius: 8,
         includeGeometry: true,
@@ -35,22 +52,6 @@ map.on('click', function (e) {
         toggleInfoBox(feature.properties);
 
     });
-});
-
-
-map.on('style.load', function () {
-
-    $.ajax({
-        url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-        jsonpCallback: 'preData',
-        dataType: 'jsonp',
-        crossDomain: true,
-        success: function(data) {
-            populateFilters(data.meta);
-            populateMap(data.locations);
-        }
-    });
-
 });
 
 map.on('mousemove', function (e) {
@@ -72,22 +73,15 @@ $(document).ready(function() {
 
 function populateFilters(meta) {
     if (meta.developers.length > 0) {
-        var developersTpl = tpl($('#template--developers').html());
+        var developersTpl = _tpl($('#template--developers').html());
         var dhtml = developersTpl({'developers': meta.developers});
         $('.holder--developers').append(dhtml);
     }
     if (meta.neighborhoods.length > 0) {
-        var neighborhoodsTpl = tpl($('#template--neighborhoods').html());
+        var neighborhoodsTpl = _tpl($('#template--neighborhoods').html());
         var nhtml = neighborhoodsTpl({'neighborhoods': meta.neighborhoods});
         $('.holder--neighborhoods').append(nhtml);
     }
-
-    $('.filters--status input').each(function() {
-        $(this).on('change', function(e) {
-            map.setLayoutProperty($(this).attr('name'), 'visibility',
-                e.target.checked ? 'visible' : 'none');
-        });
-    });
 }
 
 function populateMap(markers) {
@@ -125,6 +119,14 @@ function populateMap(markers) {
 
 }
 
+function clearMap() {
+    map.removeSource("markers");
+    if (map.getLayer('approved')) { map.removeLayer('approved'); }
+    if (map.getLayer('proposed')) { map.removeLayer('proposed'); }
+    if (map.getLayer('under-construction')) { map.removeLayer('under-construction'); }
+    if (map.getLayer('construction-completed')) { map.removeLayer('construction-completed'); }
+}
+
 var toggleFullScreen = function() {
     if ($('.container').hasClass('container--fullscreen')) {
 
@@ -159,7 +161,7 @@ $('.toggleFullScreen').on('click',function(){toggleFullScreen()});
 var toggleInfoBox = function(data) {
     if (data) {
 
-        var infoboxTpl = tpl($('#template--infobox').html());
+        var infoboxTpl = _tpl($('#template--infobox').html());
         var html = infoboxTpl(data);
 
         $('.devtrac--infobox .infobox--inner').html(html);
@@ -183,3 +185,76 @@ var toggleFilterBox = function() {
     $('.devtrac--filterbox').toggleClass('filterbox--hidden');
 }
 $('.toggleFilterBox').on('click',function(){toggleFilterBox()});
+
+var getFilters = function() {
+    filters = {}
+    $.each($('#devtrac--form').serializeArray(),function() {
+        name = $(this).attr('name');
+        value = $(this).attr('value');
+        filters[name] = value;
+    });
+    filterPoints(filters);
+}
+$('#devtrac--form input[type=text]').on('keyup',getFilters);
+$('#devtrac--form input[type=checkbox], #devtrac--form select').on('change',getFilters);
+
+var filterPoints = function(filters) {
+    filteredPoints = _filter(devtracPoints.features, function(point) {
+        var props = point.properties;
+
+        var search = true, neighborhood = true, developer = true;
+
+        // search
+        if (filters.search !== "" && props.name.toLowerCase().trim().indexOf(filters.search.toLowerCase().trim()) < 0) {
+            var search = false;
+        }
+
+        // neightborhood
+        if (filters.neighborhood !== "" && props.neighborhood.trim() !== filters.neighborhood.trim()) {
+            var neighborhood = false;
+        }
+
+        // developer
+        if (filters.developer !== "" && props.developer.toLowerCase().trim().indexOf(filters.developer.toLowerCase().trim()) < 0) {
+            var developer = false;
+        }
+
+        // status
+        var approved = false, proposed = false, underConstruction = false, constructionCompleted = false;
+        if (filters.approved === "on" && props.status === "approved") {
+            var approved = true;
+        }
+        if (filters.proposed === "on" && props.status === "proposed") {
+            var proposed = true;
+        }
+        if (filters.underConstruction === "on" && props.status === "under-construction") {
+            var underConstruction = true;
+        }
+        if (filters.constructionCompleted === "on" && props.status === "construction-completed") {
+            var constructionCompleted = true;
+        }
+        var status = (approved || proposed || underConstruction || constructionCompleted);
+
+        // usage
+        var commercial = false, residential = false, manufacturing = false, mixed = false;
+        if (filters.commercial === "on" && props.usage === "commercial") {
+            var commercial = true;
+        }
+        if (filters.residential === "on" && props.usage === "residential") {
+            var residential = true;
+        }
+        if (filters.manufacturing === "on" && props.usage === "manufacturing") {
+            var manufacturing = true;
+        }
+        if (filters.mixed === "on" && props.usage === "mixed-use-commercial-residential") {
+            var mixed = true;
+        }
+        var usage = (commercial || residential || manufacturing || mixed);
+
+        return (search && neighborhood && developer && status && usage);
+
+    });
+
+    clearMap();
+    populateMap({"type": "FeatureCollection", "features": filteredPoints});
+}
