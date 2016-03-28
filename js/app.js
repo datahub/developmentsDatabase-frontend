@@ -92,9 +92,9 @@ function populateMap(markers) {
 
     var layerColors = {
         "proposed": "#FF7676",
-        "approved": "#466C95",
-        "under-construction": "#F6C90E",
-        "construction-complete": "#5DAE8B",
+        "approved": "#F6C90E",
+        "under-construction": "#466C95",
+        "construction-completed": "#5DAE8B",
     }
 
     markers.features.forEach(function(feature) {

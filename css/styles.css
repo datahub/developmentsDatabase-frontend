@@ -137,7 +137,10 @@
     font-size: 24px; }
   .devtrac--filterbox .filterbox--inputwrapper {
     margin-bottom: 15px;
-    font-size: 14px; }
+    font-size: 14px;
+    /* custom checkboxes */
+    /* unchecked icon */
+    /* checked icon */ }
     .devtrac--filterbox .filterbox--inputwrapper .filterbox--header {
       margin: 0 0 5px 0;
       padding: 0 0 5px 0;
@@ -166,50 +169,32 @@
       border-radius: 0;
       font-size: 14px;
       line-height: 16px; }
-  .devtrac--filterbox .filters--usage {
-    /* custom checkboxes */
-    /* unchecked icon */
-    /* checked icon */ }
-    .devtrac--filterbox .filters--usage input[type=checkbox] {
-      -webkit-appearance: none;
-      -moz-appearance: none;
+    .devtrac--filterbox .filterbox--inputwrapper input[type=checkbox] {
+      position: relative;
+      top: 3px;
+      margin: 2px 0 0 0;
+      padding: 0;
       outline: none;
       font-size: 20px;
-      position: relative;
-      top: 3px; }
-    .devtrac--filterbox .filters--usage input[type=checkbox]:before {
-      font-family: FontAwesome;
-      display: inline-block;
-      content: "\F096"; }
-    .devtrac--filterbox .filters--usage input[type=checkbox]:checked:before {
-      content: "\F046"; }
-    .devtrac--filterbox .filters--usage input[type=checkbox].proposed:before {
-      color: #222; }
-  .devtrac--filterbox .filters--status {
-    /* custom checkboxes */
-    /* unchecked icon */
-    /* checked icon */ }
-    .devtrac--filterbox .filters--status input[type=checkbox] {
       -webkit-appearance: none;
-      -moz-appearance: none;
-      outline: none;
-      font-size: 20px;
-      position: relative;
-      top: 3px; }
-    .devtrac--filterbox .filters--status input[type=checkbox]:before {
-      font-family: FontAwesome;
+      -moz-appearance: none; }
+    .devtrac--filterbox .filterbox--inputwrapper input[type=checkbox]:before {
       display: inline-block;
-      content: "\F096"; }
-    .devtrac--filterbox .filters--status input[type=checkbox]:checked:before {
-      content: "\F046"; }
-    .devtrac--filterbox .filters--status input[type=checkbox].proposed:before {
-      color: #FF7676; }
-    .devtrac--filterbox .filters--status input[type=checkbox].approved:before {
-      color: #F6C90E; }
-    .devtrac--filterbox .filters--status input[type=checkbox].under:before {
-      color: #466C95; }
-    .devtrac--filterbox .filters--status input[type=checkbox].completed:before {
-      color: #5DAE8B; }
+      margin-right: 3px;
+      font-family: FontAwesome;
+      content: "\F096";
+      color: #555; }
+    .devtrac--filterbox .filterbox--inputwrapper input[type=checkbox]:checked:before {
+      content: "\F046";
+      margin-right: 0; }
+  .devtrac--filterbox .filters--status input[type=checkbox].proposed:before {
+    color: #FF7676; }
+  .devtrac--filterbox .filters--status input[type=checkbox].approved:before {
+    color: #F6C90E; }
+  .devtrac--filterbox .filters--status input[type=checkbox].under:before {
+    color: #466C95; }
+  .devtrac--filterbox .filters--status input[type=checkbox].completed:before {
+    color: #5DAE8B; }
 
 .devtrac--filterbox:hover {
   background: white; }
