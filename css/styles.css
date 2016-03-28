@@ -233,19 +233,16 @@
         width: 100%;
         padding: 2px 0px;
         text-align: center;
-        font-size: 14px; }
+        font-size: 14px;
+        color: #fff; }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .status--proposed {
-        background: #FF7676;
-        color: #fff; }
+        background: rgba(255, 118, 118, 0.65); }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .status--approved {
-        background: #F6C90E;
-        color: #fff; }
+        background: rgba(246, 201, 14, 0.65); }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .status--under-construction {
-        background: #466C95;
-        color: #fff; }
+        background: rgba(70, 108, 149, 0.65); }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .status--construction-completed {
-        background: #5DAE8B;
-        color: #fff; }
+        background: rgba(93, 174, 139, 0.65); }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--image {
         display: block;
         height: 170px;
@@ -290,7 +287,7 @@
       .devtrac--infobox .infobox--inner .infobox--details .details--coverage .coverage--link {
         color: #002269;
         text-decoration: none; }
-      .devtrac--infobox .infobox--inner .infobox--details .details--coverage .details--coverage-link:hover {
+      .devtrac--infobox .infobox--inner .infobox--details .details--coverage .coverage--link:hover {
         text-decoration: underline; }
   .devtrac--infobox .fa-times-circle {
     position: absolute;

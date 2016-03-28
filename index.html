@@ -42,23 +42,23 @@
                             <p class="filterbox--header">Usage</p>
                             <div class="inputwrapper--twocol">
                                 <label class="inputwrapper--label">
-                                    <input type="checkbox" name="usageCommercial">
+                                    <input type="checkbox" name="commercial" checked="checked">
                                     Commercial
                                 </label>
                                 <br>
                                 <label class="inputwrapper--label">
-                                    <input type="checkbox" name="usageResidential">
+                                    <input type="checkbox" name="residential" checked="checked">
                                     Residential
                                 </label>
                             </div>
                             <div class="inputwrapper--twocol">
                                 <label class="inputwrapper--label">
-                                    <input type="checkbox" name="usageManufacturing">
+                                    <input type="checkbox" name="manufacturing" checked="checked">
                                     Manufacturing
                                 </label>
                                 <br>
                                 <label class="inputwrapper--label">
-                                    <input type="checkbox" name="usageMixed">
+                                    <input type="checkbox" name="mixed" checked="checked">
                                     Mixed
                                 </label>
                             </div>
@@ -68,24 +68,24 @@
                             <p class="filterbox--header">Project Status</p>
                             <div class="inputwrapper--twocol">
                                 <label class="inputwrapper--label">
-                                    <input type="checkbox" class="proposed" name="statusProposed">
+                                    <input type="checkbox" class="proposed" name="proposed" checked="checked">
                                     Proposed
                                 </label>
                             </div>
                             <div class="inputwrapper--twocol">
                                 <label class="inputwrapper--label">
-                                    <input type="checkbox" class="approved" name="statusApproved">
+                                    <input type="checkbox" class="approved" name="approved" checked="checked">
                                     Approved
                                 </label>
                             </div>
                             <br>
                             <label class="inputwrapper--label">
-                                <input type="checkbox" class="under" name="statusUnderConstruction">
+                                <input type="checkbox" class="under" name="under-construction" checked="checked">
                                 Under Construction
                             </label>
                             <br>
                             <label class="inputwrapper--label">
-                                <input type="checkbox" class="completed" name="statusConstructionCompleted">
+                                <input type="checkbox" class="completed" name="construction-completed" checked="checked">
                                 Construction Completed
                             </label>
                         </div>
@@ -147,12 +147,14 @@
                 <% if (developer) { %><span class="details--developer"><strong>Developer: </strong><%= developer %></span><% } %>
                 <% if (architect) { %><span class="details--architect"><strong>Architect: </strong><%= architect %></span><% } %>
             </p>
+            <% if (coverage && coverage.length > 0) { %>
             <p class="details--coverage">
                 <strong>Coverage: </strong>
                 <% _forEach(coverage, function(cvg) {  %>
-                    <span class="coverage--bullet">•</span><a class="coverage--link" href="<% cvg.url %>"><% cvg.title %></a>
+                    <span class="coverage--bullet">•</span><a class="coverage--link" href="<%= cvg.link %>" target="_blank"><%= cvg.headline %></a>
                 <% }); %>
             </p>
+            <% } %>
         </div>
     </script>
     <script src="js/bundle.js"></script>

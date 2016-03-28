@@ -81,6 +81,13 @@ function populateFilters(meta) {
         var nhtml = neighborhoodsTpl({'neighborhoods': meta.neighborhoods});
         $('.holder--neighborhoods').append(nhtml);
     }
+
+    $('.filters--status input').each(function() {
+        $(this).on('change', function(e) {
+            map.setLayoutProperty($(this).attr('name'), 'visibility',
+                e.target.checked ? 'visible' : 'none');
+        });
+    });
 }
 
 function populateMap(markers) {
