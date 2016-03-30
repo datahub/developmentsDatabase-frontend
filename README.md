@@ -1,5 +1,6 @@
 ## devtracker-ui
-Front-end of Daykin's Development Tracker
+Front-end for Daykin's Development Tracker
+- add #fresh to the url to fetch new data, otherwise data is cached for an hour
 
 Open a console session in the project folder:
 
@@ -18,7 +19,7 @@ Launch the dev environment
 npm start
 ```
 ---
-#DO WORK
+### DO WORK
 
 *control + c to quit working*
 
