@@ -8,6 +8,12 @@ var _uniq = require("lodash/uniq");
 var _property = require("lodash/property");
 window._forEach = require('lodash/foreach');
 
+$(document).ready(function() {
+    if ($(window).width() < 621) {
+        $('.devtrac--filterbox').addClass('filterbox--hidden');
+    }
+});
+
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
 window.map = new mapboxgl.Map({
     container: 'devtrac--mapbox',
@@ -115,35 +121,28 @@ map.on('click', function (e) {
         radius: 7,
         includeGeometry: true,
         layer: ['approved','proposed','under-construction','construction-completed']
-    }, function (err, features) {
+    },
+    function (err, features) {
 
         if (err || !features.length) {
             toggleInfoBox();
             return;
         }
-
         var feature = features[0];
-
         toggleInfoBox(feature.properties);
 
     });
+
 });
 
 map.on('mousemove', function (e) {
     map.featuresAt(e.point, {
         radius: 8,
         layer: ['approved','proposed','under-construction','construction-completed']
-    }, function (err, features) {
+    },
+    function (err, features) {
         map.getCanvas().style.cursor = (!err && features.length) ? 'pointer' : '';
     });
-});
-
-
-$(document).ready(function() {
-    if ($(window).width() < 621) {
-        $('.devtrac--filterbox').addClass('filterbox--hidden');
-    }
-
 });
 
 function populateFilters(devs, hoods) {
@@ -203,6 +202,7 @@ function clearMap() {
 }
 
 var toggleFullScreen = function() {
+
     if ($('.container').hasClass('container--fullscreen')) {
 
         if ($(window).width() < 621) {
@@ -230,6 +230,7 @@ var toggleFullScreen = function() {
     }
     $('.container').toggleClass('container--fullscreen');
     map.resize();
+
 }
 $('.toggleFullScreen').on('click',function(){toggleFullScreen()});
 
@@ -242,47 +243,75 @@ var toggleInfoBox = function(data) {
         $('.devtrac--infobox .infobox--inner').html(html);
         $('.devtrac--infobox').removeClass('infobox--hidden');
 
-        $('.fa-times-circle').on('click',function() {
+        $('.infobox--close').on('click',function() {
            toggleInfoBox();
         });
-        $('.imagewrap--image').on('click',function() {
-           lighbox($('.imagewrap--image').attr('src'));
-        });
+
+        if ($(window).width() > 620) {
+            $('.lightbox--open').on('click',function() {
+               lighbox($('.imagewrap--image').attr('src'));
+            });
+        }
 
     } else {
 
         $('.devtrac--infobox .infobox--inner').html('');
         $('.devtrac--infobox').addClass('infobox--hidden');
 
-        $('.fa-times-circle').unbind('click');
-        $('.imagewrap--image').unbind('click');
-
+        $('.infobox--close').unbind('click');
+        if ($(window).width() > 620) {
+            $('.lighbox--open').unbind('click');
+        }
     }
 }
 
 var lighbox = function(imageUrl) {
-    $('.devtrac--lighbox').show();
-    var imgHeight;
-    var imgWidth;
-    function findHHandWW() {
-        imgHeight = this.height;
-        imgWidth = this.width;
-        return true;
-    }
-    function showImage(imgPath) {
-        var myImage = new Image();
-        myImage.name = imgPath;
-        myImage.onload = findHHandWW;
-        myImage.src = imgPath;
-        return imgPath;
-    }
-    var url = showImage(imageUrl);
-    if(imgHeight > imgWidth) {
-        var className = 'portrait';
+
+    if (imageUrl) {
+        var theImage = new Image();
+        theImage.src = imageUrl;
+        theImage.addEventListener('load', function() {
+
+            $('.devtrac--lighbox').show();
+
+            var winHeight = $('#devtrac').height();
+            var winWidth = $('#devtrac').width();
+            var imgHeight = this.height;
+            var imgWidth = this.width;
+            var scaledHeight = this.height;
+            var scaledWidth = this.width;
+
+            if (imgHeight > winHeight) {
+                scaledHeight = Math.round(winHeight * .92);
+                scaledWidth = Math.round((scaledHeight * imgWidth) / imgHeight);
+            } else if (imgWidth > winWidth) {
+                scaledWidth = Math.round(winWidth * .92);
+                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
+            }
+
+            if (imgHeight > imgWidth) {
+                var className = 'portrait';
+                var style = "height: " + scaledHeight + "px";
+            } else {
+                var className = 'landscape';
+                var style = "width: " + scaledWidth + "px";
+            }
+
+            $('.devtrac--lighbox').append('<img class="lightbox--img ' + className + '" style="' + style + '" src="' + imageUrl + '">');
+
+            $('.lighbox--close').on('click',function() {
+               lighbox();
+            });
+
+        });
+
     } else {
-        var className = 'landscape';
+
+        $('.devtrac--lighbox').hide();
+        $('.lightbox--close').unbind('click');
+        $('.lightbox--img').remove();
+
     }
-    $('.devtrac--lighbox').html('<img class="' + className + '" src="' + url + '">');
 }
 
 var toggleFilterBox = function() {

@@ -314,11 +314,19 @@
   .devtrac--lighbox img {
     margin-top: 2%; }
   .devtrac--lighbox .landscape {
-    width: 96%;
+    width: 100%;
     height: auto; }
   .devtrac--lighbox .portrait {
     width: auto;
-    height: 96%; }
+    height: 100%; }
+  .devtrac--lighbox .fa-times-circle {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 6;
+    color: #fff;
+    font-size: 30px;
+    line-height: 30px; }
 
 .infobox--hidden {
   transform: translateY(200px); }
