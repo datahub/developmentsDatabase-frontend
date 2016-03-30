@@ -13,11 +13,6 @@ Get latest version of code
 ```
 git pull
 ```
-
-Create new branch to do work in
-```
-git checkout -b [branch name]
-```
 Launch the dev environment
 ```
 npm start
@@ -31,15 +26,8 @@ npm start
 
 Commit changes
 ```
+git status
 git commit -m "[describe work]"
-```
-Switch to original branch
-```
-git checkout master
-```
-Merge changes into original branch
-```
-git merge [branch name]
 ```
 Make changes available to everyone
 ```
