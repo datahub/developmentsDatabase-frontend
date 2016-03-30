@@ -226,6 +226,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             padding: 0;
             outline: none;
             font-size: 20px;
+            background: #fff;
             -webkit-appearance:none;
             -moz-appearance:none;
         }
@@ -404,6 +405,31 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     }
 
 }
+.devtrac--lighbox {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 5;
+    text-align: center;
+    background: rgba(0,0,0,.8);
+
+    img {
+        margin-top: 2%;
+    }
+
+    .landscape {
+        width: 96%;
+        height: auto;
+    }
+    .portrait {
+        width: auto;
+        height: 96%;
+    }
+}
+
 .infobox--hidden {
     transform: translateY(200px);
 }

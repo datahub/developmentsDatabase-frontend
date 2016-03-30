@@ -1,4 +1,5 @@
 .DS_Store
 .sass-cache
-*.map
+js/bundle.js.map
+css/styles.css.map
 node_modules
