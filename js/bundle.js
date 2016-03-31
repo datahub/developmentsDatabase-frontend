@@ -51,9 +51,9 @@
 	var _filter = __webpack_require__(55);
 	var _find = __webpack_require__(126);
 	var _map = __webpack_require__(129);
-	var _uniq = __webpack_require__(131);
 	var _property = __webpack_require__(124);
-	window._forEach = __webpack_require__(142);
+	var _throttle = __webpack_require__(131);
+	window._forEach = __webpack_require__(134);
 	
 	$(document).ready(function() {
 	    if ($(window).width() < 621) {
@@ -64,6 +64,7 @@
 	window.devtracLayers = [];
 	window.devtracPoints = {};
 	window.map;
+	window.firstRun = true;
 	
 	mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
 	window.map = new mapboxgl.Map({
@@ -80,89 +81,7 @@
 	
 	map.on('style.load', function () {
 	
-	    if (window.localStorage) {
-	
-	        if (window.localStorage.getItem('devtrac-cache')) {
-	
-	            var cacheBust = (window.location.hash.indexOf('fresh') > -1) ? true : false;
-	
-	            var data = JSON.parse(window.localStorage.getItem('devtrac-cache'));
-	            var cacheLength = (3600 * 1); // 1 hour in seconds
-	            var now = Math.floor(Date.now() / 1000);
-	
-	            if ((now - data.timestamp) < cacheLength && !cacheBust) {
-	
-	                console.log('using cached data');
-	
-	                window.devtracPoints = data.locations;
-	                var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
-	                var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
-	                populateFilters(developers, neighborhoods);
-	                populateMap(data.locations);
-	
-	            } else {
-	
-	                console.log('using fresh data');
-	
-	                $.ajax({
-	                    url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-	                    jsonpCallback: 'preData',
-	                    dataType: 'jsonp',
-	                    crossDomain: true,
-	                    success: function(data) {
-	                        window.devtracPoints = data.locations;
-	                        var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
-	                        var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
-	                        populateFilters(developers, neighborhoods);
-	                        populateMap(data.locations);
-	                        var storageString = JSON.stringify({
-	                            timestamp : Math.floor(Date.now() / 1000),
-	                            locations : data.locations
-	                        });
-	                        window.localStorage.setItem('devtrac-cache',storageString);
-	                    }
-	                });
-	
-	            }
-	
-	        } else {
-	
-	            $.ajax({
-	                url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-	                jsonpCallback: 'preData',
-	                dataType: 'jsonp',
-	                crossDomain: true,
-	                success: function(data) {
-	                    window.devtracPoints = data.locations;
-	                    var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
-	                    var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
-	                    populateFilters(developers, neighborhoods);
-	                    populateMap(data.locations);
-	                    var storageString = JSON.stringify({
-	                        timestamp : Math.floor(Date.now() / 1000),
-	                        locations : data.locations
-	                    });
-	                    window.localStorage.setItem('devtrac-cache',storageString);
-	                }
-	            });
-	
-	        }
-	
-	    } else {
-	        $.ajax({
-	            url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-	            jsonpCallback: 'preData',
-	            dataType: 'jsonp',
-	            crossDomain: true,
-	            success: function(data) {
-	                var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
-	                var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
-	                populateFilters(developers, neighborhoods);
-	                populateMap(data.locations);
-	                window.devtracPoints = data.locations;
-	            }
-	        });
-	    }
+	    getCacheData();
 	
 	});
 	
@@ -195,6 +114,86 @@
 	    });
 	});
 	
+	var getCacheData = function() {
+	    if (window.localStorage) {
+	
+	        if (window.localStorage.getItem('devtrac-cache')) {
+	
+	            var cacheBust = (window.location.hash.indexOf('fresh') > -1) ? true : false;
+	
+	            var data = JSON.parse(window.localStorage.getItem('devtrac-cache'));
+	            var cacheLength = (3600 * 1); // 1 hour in seconds
+	            var now = Math.floor(Date.now() / 1000);
+	
+	            if ((now - data.timestamp) < cacheLength && !cacheBust) {
+	
+	                console.log('using cached data');
+	
+	                window.devtracPoints = data.locations;
+	                populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                populateMap(data.locations);
+	
+	            } else {
+	
+	                console.log('using fresh data');
+	
+	                $.ajax({
+	                    url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+	                    jsonpCallback: 'preData',
+	                    dataType: 'jsonp',
+	                    crossDomain: true,
+	                    success: function(data) {
+	                        window.devtracPoints = data.locations;
+	                        populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                        populateMap(data.locations);
+	                        var storageString = JSON.stringify({
+	                            timestamp : Math.floor(Date.now() / 1000),
+	                            locations : data.locations,
+	                            meta : data.meta,
+	                        });
+	                        window.localStorage.setItem('devtrac-cache',storageString);
+	                    }
+	                });
+	
+	            }
+	
+	        } else {
+	
+	            $.ajax({
+	                url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+	                jsonpCallback: 'preData',
+	                dataType: 'jsonp',
+	                crossDomain: true,
+	                success: function(data) {
+	                    window.devtracPoints = data.locations;
+	                    populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                    populateMap(data.locations);
+	                    var storageString = JSON.stringify({
+	                        timestamp : Math.floor(Date.now() / 1000),
+	                        locations : data.locations,
+	                        meta : data.meta,
+	                    });
+	                    window.localStorage.setItem('devtrac-cache',storageString);
+	                }
+	            });
+	
+	        }
+	
+	    } else {
+	        $.ajax({
+	            url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+	            jsonpCallback: 'preData',
+	            dataType: 'jsonp',
+	            crossDomain: true,
+	            success: function(data) {
+	                populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                populateMap(data.locations);
+	                window.devtracPoints = data.locations;
+	            }
+	        });
+	    }
+	}
+	
 	var highlightPt = function(geo) {
 	    if (geo) {
 	
@@ -221,8 +220,8 @@
 	            "type": "circle",
 	            "paint": {
 	                "circle-radius": 11,
-	                "circle-color": "#ffffff",
-	                "circle-opacity": .85
+	                "circle-color": "#666666",
+	                "circle-opacity": .65
 	            }
 	        }, window.devtracLayers[0]);
 	
@@ -279,8 +278,10 @@
 	        }
 	    });
 	
-	    router();
-	
+	    if (window.firstRun) {
+	        router('go');
+	        window.firstRun = false;
+	    }
 	}
 	
 	var clearMap = function() {
@@ -345,6 +346,8 @@
 	            });
 	        }
 	
+	        router('set','/development/' + data.properties.id);
+	
 	    } else {
 	
 	        highlightPt();
@@ -355,6 +358,9 @@
 	        if ($(window).width() > 620) {
 	            $('.lighbox--open').unbind('click');
 	        }
+	
+	        router('set','');
+	
 	    }
 	}
 	
@@ -371,8 +377,8 @@
 	            var winWidth = $('#devtrac').width();
 	            var imgHeight = this.height;
 	            var imgWidth = this.width;
-	            var newHeight, scaledHeight;
-	            var newWidth, scaledWidth;
+	            var newHeight = 0, scaledHeight = 0;
+	            var newWidth = 0, scaledWidth = 0;
 	
 	            if (imgHeight > winHeight) {
 	                newHeight = Math.round(winHeight * .92);
@@ -381,14 +387,24 @@
 	            if (newWidth > winWidth) {
 	                scaledWidth = Math.round(winWidth * .92);
 	                scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
+	            } else if (imgWidth > winWidth) {
+	                scaledWidth = Math.round(winWidth * .92);
+	                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
+	            } else {
+	                scaledWidth = newWidth;
+	                scaledHeight = newHeight;
 	            }
 	
 	            if (imgHeight > imgWidth) {
 	                var className = 'portrait';
-	                var style = "height: " + scaledHeight + "px";
+	                var style = "height: " + scaledHeight + "px;";
 	            } else {
 	                var className = 'landscape';
-	                var style = "width: " + scaledWidth + "px";
+	                var style = "width: " + scaledWidth + "px;";
+	                if (scaledHeight < winHeight) {
+	                    var diff = (winHeight - scaledHeight) / 2;
+	                    style = style + "margin-top:" + diff + "px;";
+	                }
 	            }
 	
 	            $('.devtrac--lighbox').append('<img class="lightbox--img ' + className + '" style="' + style + '" src="' + imageUrl + '">');
@@ -413,16 +429,73 @@
 	}
 	$('.toggleFilterBox').on('click',function(){toggleFilterBox()});
 	
+	var setFilters = function(filterOptions) {
+	    if (filterOptions.search !== "") {
+	        $('#devtrac--form input[name=search]').val(filterOptions.search);
+	    }
+	    if (filterOptions.residential === "on") {
+	        $('#devtrac--form input[name=residential]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=residential]').prop("checked", false);
+	    }
+	    if (filterOptions.commercial === "on") {
+	        $('#devtrac--form input[name=commercial]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=commercial]').prop("checked", false);
+	    }
+	    if (filterOptions.manufacturing === "on") {
+	        $('#devtrac--form input[name=manufacturing]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=manufacturing]').prop("checked", false);
+	    }
+	    if (filterOptions.mixed === "on") {
+	        $('#devtrac--form input[name=mixed]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=mixed]').prop("checked", false);
+	    }
+	    if (filterOptions.approved === "on") {
+	        $('#devtrac--form input[name=approved]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=approved]').prop("checked", false);
+	    }
+	    if (filterOptions.proposed === "on") {
+	        $('#devtrac--form input[name=proposed]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=proposed]').prop("checked", false);
+	    }
+	    if (filterOptions.underConstruction === "on") {
+	        $('#devtrac--form input[name=underConstruction]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=underConstruction]').prop("checked", false);
+	    }
+	    if (filterOptions.constructionCompleted === "on") {
+	        $('#devtrac--form input[name=constructionCompleted]').prop("checked", true);
+	    } else {
+	        $('#devtrac--form input[name=constructionCompleted]').prop("checked", false);
+	    }
+	    if (filterOptions.developer !== "") {
+	        $('#devtrac--form select[name=developer] option[value="'+filterOptions.developer+'"]').prop("selected", true);
+	    }
+	    if (filterOptions.neighborhood !== "") {
+	        $('#devtrac--form select[name=neighborhood] option[value="'+filterOptions.neighborhood+'"]').prop("selected", true);
+	    }
+	}
+	
 	var getFilters = function() {
-	    filters = {}
+	    filters = {};
+	    hash = "";
 	    $.each($('#devtrac--form').serializeArray(),function() {
 	        name = $(this).attr('name');
 	        value = $(this).attr('value');
 	        filters[name] = value;
+	        if (value !== ''){
+	            hash += "&" + name + "=" + value;
+	        }
 	    });
 	    filterPoints(filters);
+	    router('set','/search/' + hash);
 	}
-	$('#devtrac--form input[type=text]').on('keyup',getFilters);
+	$('#devtrac--form input[type=text]').on('keyup',_throttle(getFilters, 500, {'leading': false}));
 	$('#devtrac--form input[type=checkbox], #devtrac--form select').on('change',getFilters);
 	
 	var filterPoints = function(filters) {
@@ -486,13 +559,16 @@
 	        var list = _map(filteredPoints, _property('properties.name'));
 	    }
 	
+	    //TODO: refactor to use mapbox layer filters instead of entire map redraw
 	    clearMap();
 	    populateMap({"type": "FeatureCollection", "features": filteredPoints});
+	
 	}
-	var router = function(route) {
-	    if (route) {
-	        window.location.hash = route;
-	    } else {
+	
+	var router = function(action,route) {
+	    if (action === 'set') {
+	        window.location.hash = route.trim();
+	    } else if (action === 'go') {
 	        var hash = window.location.hash.substr(1);
 	        if (hash) {
 	            var paths = hash.split("/").filter(Boolean);
@@ -506,13 +582,28 @@
 	                }
 	            } else if (paths[0] === 'search') {
 	                var hashFilters = paths[1].split("&").filter(Boolean);
-	                var filters = ['search','residential','commercial','manufacturing','mixed','approved','proposed','under-construction','construction-completed','developer','neighborhood'];
+	                var filterOptions = ['search','residential','commercial','manufacturing','mixed','approved','proposed','under-construction','construction-completed','developer','neighborhood'];
+	                var filters = {
+	                    'search':'',
+	                    'residential': 'on',
+	                    'commercial': 'on',
+	                    'manufacturing': 'on',
+	                    'mixed': 'on',
+	                    'approved': 'on',
+	                    'proposed': 'on',
+	                    'under-construction': 'on',
+	                    'construction-completed': 'on',
+	                    'developer': '',
+	                    'neighborhood': '',
+	                };
 	                _forEach(hashFilters, function(filter) {
-	                    if ($.inArray(filter.split("=")[0],filters) > -1) {
-	                        // apply filter
-	                        console.log(filter.split("=")[0] + ": " + filter.split("=")[1]);
+	                    var filterParts = filter.split("=");
+	                    if ($.inArray(filterParts[0],filterOptions) > -1) {
+	                        filters[filterParts[0]] = filterParts[1];
 	                    }
 	                });
+	                //filterPoints(filters);
+	                //setFilters(filters);
 	            }
 	        }
 	    }
@@ -14942,369 +15033,287 @@
 /* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseUniq = __webpack_require__(132);
+	var debounce = __webpack_require__(132),
+	    isObject = __webpack_require__(16);
+	
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
 	
 	/**
-	 * Creates a duplicate-free version of an array, using
-	 * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-	 * for equality comparisons, in which only the first occurrence of each element
-	 * is kept.
+	 * Creates a throttled function that only invokes `func` at most once per
+	 * every `wait` milliseconds. The throttled function comes with a `cancel`
+	 * method to cancel delayed `func` invocations and a `flush` method to
+	 * immediately invoke them. Provide an options object to indicate whether
+	 * `func` should be invoked on the leading and/or trailing edge of the `wait`
+	 * timeout. The `func` is invoked with the last arguments provided to the
+	 * throttled function. Subsequent calls to the throttled function return the
+	 * result of the last `func` invocation.
+	 *
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+	 * on the trailing edge of the timeout only if the throttled function is
+	 * invoked more than once during the `wait` timeout.
+	 *
+	 * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+	 * for details over the differences between `_.throttle` and `_.debounce`.
 	 *
 	 * @static
 	 * @memberOf _
-	 * @category Array
-	 * @param {Array} array The array to inspect.
-	 * @returns {Array} Returns the new duplicate free array.
+	 * @category Function
+	 * @param {Function} func The function to throttle.
+	 * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+	 * @param {Object} [options] The options object.
+	 * @param {boolean} [options.leading=true] Specify invoking on the leading
+	 *  edge of the timeout.
+	 * @param {boolean} [options.trailing=true] Specify invoking on the trailing
+	 *  edge of the timeout.
+	 * @returns {Function} Returns the new throttled function.
 	 * @example
 	 *
-	 * _.uniq([2, 1, 2]);
-	 * // => [2, 1]
+	 * // Avoid excessively updating the position while scrolling.
+	 * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+	 *
+	 * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
+	 * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+	 * jQuery(element).on('click', throttled);
+	 *
+	 * // Cancel the trailing throttled invocation.
+	 * jQuery(window).on('popstate', throttled.cancel);
 	 */
-	function uniq(array) {
-	  return (array && array.length)
-	    ? baseUniq(array)
-	    : [];
+	function throttle(func, wait, options) {
+	  var leading = true,
+	      trailing = true;
+	
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  if (isObject(options)) {
+	    leading = 'leading' in options ? !!options.leading : leading;
+	    trailing = 'trailing' in options ? !!options.trailing : trailing;
+	  }
+	  return debounce(func, wait, {
+	    'leading': leading,
+	    'maxWait': wait,
+	    'trailing': trailing
+	  });
 	}
 	
-	module.exports = uniq;
+	module.exports = throttle;
 
 
 /***/ },
 /* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SetCache = __webpack_require__(133),
-	    arrayIncludes = __webpack_require__(135),
-	    arrayIncludesWith = __webpack_require__(138),
-	    cacheHas = __webpack_require__(139),
-	    createSet = __webpack_require__(140),
-	    setToArray = __webpack_require__(101);
+	var isObject = __webpack_require__(16),
+	    now = __webpack_require__(133),
+	    toNumber = __webpack_require__(22);
 	
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+	
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
 	
 	/**
-	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+	 * Creates a debounced function that delays invoking `func` until after `wait`
+	 * milliseconds have elapsed since the last time the debounced function was
+	 * invoked. The debounced function comes with a `cancel` method to cancel
+	 * delayed `func` invocations and a `flush` method to immediately invoke them.
+	 * Provide an options object to indicate whether `func` should be invoked on
+	 * the leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+	 * with the last arguments provided to the debounced function. Subsequent calls
+	 * to the debounced function return the result of the last `func` invocation.
 	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Function} [iteratee] The iteratee invoked per element.
-	 * @param {Function} [comparator] The comparator invoked per element.
-	 * @returns {Array} Returns the new duplicate free array.
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+	 * on the trailing edge of the timeout only if the debounced function is
+	 * invoked more than once during the `wait` timeout.
+	 *
+	 * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+	 * for details over the differences between `_.debounce` and `_.throttle`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Function
+	 * @param {Function} func The function to debounce.
+	 * @param {number} [wait=0] The number of milliseconds to delay.
+	 * @param {Object} [options] The options object.
+	 * @param {boolean} [options.leading=false] Specify invoking on the leading
+	 *  edge of the timeout.
+	 * @param {number} [options.maxWait] The maximum time `func` is allowed to be
+	 *  delayed before it's invoked.
+	 * @param {boolean} [options.trailing=true] Specify invoking on the trailing
+	 *  edge of the timeout.
+	 * @returns {Function} Returns the new debounced function.
+	 * @example
+	 *
+	 * // Avoid costly calculations while the window size is in flux.
+	 * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+	 *
+	 * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+	 * jQuery(element).on('click', _.debounce(sendMail, 300, {
+	 *   'leading': true,
+	 *   'trailing': false
+	 * }));
+	 *
+	 * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+	 * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+	 * var source = new EventSource('/stream');
+	 * jQuery(source).on('message', debounced);
+	 *
+	 * // Cancel the trailing debounced invocation.
+	 * jQuery(window).on('popstate', debounced.cancel);
 	 */
-	function baseUniq(array, iteratee, comparator) {
-	  var index = -1,
-	      includes = arrayIncludes,
-	      length = array.length,
-	      isCommon = true,
-	      result = [],
-	      seen = result;
+	function debounce(func, wait, options) {
+	  var args,
+	      maxTimeoutId,
+	      result,
+	      stamp,
+	      thisArg,
+	      timeoutId,
+	      trailingCall,
+	      lastCalled = 0,
+	      leading = false,
+	      maxWait = false,
+	      trailing = true;
 	
-	  if (comparator) {
-	    isCommon = false;
-	    includes = arrayIncludesWith;
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
 	  }
-	  else if (length >= LARGE_ARRAY_SIZE) {
-	    var set = iteratee ? null : createSet(array);
-	    if (set) {
-	      return setToArray(set);
+	  wait = toNumber(wait) || 0;
+	  if (isObject(options)) {
+	    leading = !!options.leading;
+	    maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
+	    trailing = 'trailing' in options ? !!options.trailing : trailing;
+	  }
+	
+	  function cancel() {
+	    if (timeoutId) {
+	      clearTimeout(timeoutId);
 	    }
-	    isCommon = false;
-	    includes = cacheHas;
-	    seen = new SetCache;
+	    if (maxTimeoutId) {
+	      clearTimeout(maxTimeoutId);
+	    }
+	    lastCalled = 0;
+	    args = maxTimeoutId = thisArg = timeoutId = trailingCall = undefined;
 	  }
-	  else {
-	    seen = iteratee ? [] : result;
-	  }
-	  outer:
-	  while (++index < length) {
-	    var value = array[index],
-	        computed = iteratee ? iteratee(value) : value;
 	
-	    if (isCommon && computed === computed) {
-	      var seenIndex = seen.length;
-	      while (seenIndex--) {
-	        if (seen[seenIndex] === computed) {
-	          continue outer;
+	  function complete(isCalled, id) {
+	    if (id) {
+	      clearTimeout(id);
+	    }
+	    maxTimeoutId = timeoutId = trailingCall = undefined;
+	    if (isCalled) {
+	      lastCalled = now();
+	      result = func.apply(thisArg, args);
+	      if (!timeoutId && !maxTimeoutId) {
+	        args = thisArg = undefined;
+	      }
+	    }
+	  }
+	
+	  function delayed() {
+	    var remaining = wait - (now() - stamp);
+	    if (remaining <= 0 || remaining > wait) {
+	      complete(trailingCall, maxTimeoutId);
+	    } else {
+	      timeoutId = setTimeout(delayed, remaining);
+	    }
+	  }
+	
+	  function flush() {
+	    if ((timeoutId && trailingCall) || (maxTimeoutId && trailing)) {
+	      result = func.apply(thisArg, args);
+	    }
+	    cancel();
+	    return result;
+	  }
+	
+	  function maxDelayed() {
+	    complete(trailing, timeoutId);
+	  }
+	
+	  function debounced() {
+	    args = arguments;
+	    stamp = now();
+	    thisArg = this;
+	    trailingCall = trailing && (timeoutId || !leading);
+	
+	    if (maxWait === false) {
+	      var leadingCall = leading && !timeoutId;
+	    } else {
+	      if (!lastCalled && !maxTimeoutId && !leading) {
+	        lastCalled = stamp;
+	      }
+	      var remaining = maxWait - (stamp - lastCalled);
+	
+	      var isCalled = (remaining <= 0 || remaining > maxWait) &&
+	        (leading || maxTimeoutId);
+	
+	      if (isCalled) {
+	        if (maxTimeoutId) {
+	          maxTimeoutId = clearTimeout(maxTimeoutId);
 	        }
+	        lastCalled = stamp;
+	        result = func.apply(thisArg, args);
 	      }
-	      if (iteratee) {
-	        seen.push(computed);
+	      else if (!maxTimeoutId) {
+	        maxTimeoutId = setTimeout(maxDelayed, remaining);
 	      }
-	      result.push(value);
 	    }
-	    else if (!includes(seen, computed, comparator)) {
-	      if (seen !== result) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
+	    if (isCalled && timeoutId) {
+	      timeoutId = clearTimeout(timeoutId);
 	    }
+	    else if (!timeoutId && wait !== maxWait) {
+	      timeoutId = setTimeout(delayed, wait);
+	    }
+	    if (leadingCall) {
+	      isCalled = true;
+	      result = func.apply(thisArg, args);
+	    }
+	    if (isCalled && !timeoutId && !maxTimeoutId) {
+	      args = thisArg = undefined;
+	    }
+	    return result;
 	  }
-	  return result;
+	  debounced.cancel = cancel;
+	  debounced.flush = flush;
+	  return debounced;
 	}
 	
-	module.exports = baseUniq;
+	module.exports = debounce;
 
 
 /***/ },
 /* 133 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var MapCache = __webpack_require__(76),
-	    cachePush = __webpack_require__(134);
-	
 	/**
+	 * Gets the timestamp of the number of milliseconds that have elapsed since
+	 * the Unix epoch (1 January 1970 00:00:00 UTC).
 	 *
-	 * Creates a set cache object to store unique values.
+	 * @static
+	 * @memberOf _
+	 * @type {Function}
+	 * @category Date
+	 * @returns {number} Returns the timestamp.
+	 * @example
 	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [values] The values to cache.
+	 * _.defer(function(stamp) {
+	 *   console.log(_.now() - stamp);
+	 * }, _.now());
+	 * // => logs the number of milliseconds it took for the deferred function to be invoked
 	 */
-	function SetCache(values) {
-	  var index = -1,
-	      length = values ? values.length : 0;
+	var now = Date.now;
 	
-	  this.__data__ = new MapCache;
-	  while (++index < length) {
-	    this.push(values[index]);
-	  }
-	}
-	
-	// Add functions to the `SetCache`.
-	SetCache.prototype.push = cachePush;
-	
-	module.exports = SetCache;
+	module.exports = now;
 
 
 /***/ },
 /* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isKeyable = __webpack_require__(87);
-	
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-	
-	/**
-	 * Adds `value` to the set cache.
-	 *
-	 * @private
-	 * @name push
-	 * @memberOf SetCache
-	 * @param {*} value The value to cache.
-	 */
-	function cachePush(value) {
-	  var map = this.__data__;
-	  if (isKeyable(value)) {
-	    var data = map.__data__,
-	        hash = typeof value == 'string' ? data.string : data.hash;
-	
-	    hash[value] = HASH_UNDEFINED;
-	  }
-	  else {
-	    map.set(value, HASH_UNDEFINED);
-	  }
-	}
-	
-	module.exports = cachePush;
-
-
-/***/ },
-/* 135 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIndexOf = __webpack_require__(136);
-	
-	/**
-	 * A specialized version of `_.includes` for arrays without support for
-	 * specifying an index to search from.
-	 *
-	 * @private
-	 * @param {Array} array The array to search.
-	 * @param {*} target The value to search for.
-	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
-	 */
-	function arrayIncludes(array, value) {
-	  return !!array.length && baseIndexOf(array, value, 0) > -1;
-	}
-	
-	module.exports = arrayIncludes;
-
-
-/***/ },
-/* 136 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var indexOfNaN = __webpack_require__(137);
-	
-	/**
-	 * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
-	 *
-	 * @private
-	 * @param {Array} array The array to search.
-	 * @param {*} value The value to search for.
-	 * @param {number} fromIndex The index to search from.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function baseIndexOf(array, value, fromIndex) {
-	  if (value !== value) {
-	    return indexOfNaN(array, fromIndex);
-	  }
-	  var index = fromIndex - 1,
-	      length = array.length;
-	
-	  while (++index < length) {
-	    if (array[index] === value) {
-	      return index;
-	    }
-	  }
-	  return -1;
-	}
-	
-	module.exports = baseIndexOf;
-
-
-/***/ },
-/* 137 */
-/***/ function(module, exports) {
-
-	/**
-	 * Gets the index at which the first occurrence of `NaN` is found in `array`.
-	 *
-	 * @private
-	 * @param {Array} array The array to search.
-	 * @param {number} fromIndex The index to search from.
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {number} Returns the index of the matched `NaN`, else `-1`.
-	 */
-	function indexOfNaN(array, fromIndex, fromRight) {
-	  var length = array.length,
-	      index = fromIndex + (fromRight ? 0 : -1);
-	
-	  while ((fromRight ? index-- : ++index < length)) {
-	    var other = array[index];
-	    if (other !== other) {
-	      return index;
-	    }
-	  }
-	  return -1;
-	}
-	
-	module.exports = indexOfNaN;
-
-
-/***/ },
-/* 138 */
-/***/ function(module, exports) {
-
-	/**
-	 * This function is like `arrayIncludes` except that it accepts a comparator.
-	 *
-	 * @private
-	 * @param {Array} array The array to search.
-	 * @param {*} target The value to search for.
-	 * @param {Function} comparator The comparator invoked per element.
-	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
-	 */
-	function arrayIncludesWith(array, value, comparator) {
-	  var index = -1,
-	      length = array.length;
-	
-	  while (++index < length) {
-	    if (comparator(value, array[index])) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-	
-	module.exports = arrayIncludesWith;
-
-
-/***/ },
-/* 139 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isKeyable = __webpack_require__(87);
-	
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-	
-	/**
-	 * Checks if `value` is in `cache`.
-	 *
-	 * @private
-	 * @param {Object} cache The set cache to search.
-	 * @param {*} value The value to search for.
-	 * @returns {number} Returns `true` if `value` is found, else `false`.
-	 */
-	function cacheHas(cache, value) {
-	  var map = cache.__data__;
-	  if (isKeyable(value)) {
-	    var data = map.__data__,
-	        hash = typeof value == 'string' ? data.string : data.hash;
-	
-	    return hash[value] === HASH_UNDEFINED;
-	  }
-	  return map.has(value);
-	}
-	
-	module.exports = cacheHas;
-
-
-/***/ },
-/* 140 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Set = __webpack_require__(104),
-	    noop = __webpack_require__(141);
-	
-	/**
-	 * Creates a set of `values`.
-	 *
-	 * @private
-	 * @param {Array} values The values to add to the set.
-	 * @returns {Object} Returns the new set.
-	 */
-	var createSet = !(Set && new Set([1, 2]).size === 2) ? noop : function(values) {
-	  return new Set(values);
-	};
-	
-	module.exports = createSet;
-
-
-/***/ },
-/* 141 */
-/***/ function(module, exports) {
-
-	/**
-	 * A no-operation function that returns `undefined` regardless of the
-	 * arguments it receives.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Util
-	 * @example
-	 *
-	 * var object = { 'user': 'fred' };
-	 *
-	 * _.noop(object) === undefined;
-	 * // => true
-	 */
-	function noop() {
-	  // No operation performed.
-	}
-	
-	module.exports = noop;
-
-
-/***/ },
-/* 142 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayEach = __webpack_require__(143),
-	    baseCastFunction = __webpack_require__(144),
+	var arrayEach = __webpack_require__(135),
+	    baseCastFunction = __webpack_require__(136),
 	    baseEach = __webpack_require__(58),
 	    isArray = __webpack_require__(35);
 	
@@ -15346,7 +15355,7 @@
 
 
 /***/ },
-/* 143 */
+/* 135 */
 /***/ function(module, exports) {
 
 	/**
@@ -15374,7 +15383,7 @@
 
 
 /***/ },
-/* 144 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var identity = __webpack_require__(123);
