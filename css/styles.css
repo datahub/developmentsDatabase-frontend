@@ -233,8 +233,7 @@
     margin: 10px; }
     .devtrac--infobox .infobox--inner .infobox--imagewrap {
       position: relative;
-      float: left;
-      text-transform: capitalize; }
+      float: left; }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--status {
         position: absolute;
         bottom: -10px;
@@ -242,6 +241,7 @@
         width: 100%;
         padding: 2px 0px;
         text-align: center;
+        text-transform: capitalize;
         font-size: 14px;
         color: #fff; }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .status--proposed {
@@ -257,6 +257,7 @@
         height: 170px;
         margin: -10px 10px -10px -10px;
         width: auto;
+        max-width: 300px;
         float: left; }
     .devtrac--infobox .infobox--inner .infobox--details .details--name {
       margin: 0;
@@ -370,6 +371,7 @@
       margin: -10px -10px 10px -10px; }
       .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--image {
         width: 100%;
+        max-width: 100%;
         height: auto;
         float: none;
         margin: 0; }

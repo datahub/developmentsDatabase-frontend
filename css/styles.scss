@@ -311,7 +311,6 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         .infobox--imagewrap {
             position: relative;
             float: left;
-            text-transform: capitalize;
 
             .imagewrap--status {
                 position: absolute;
@@ -320,6 +319,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 width: 100%;
                 padding: 2px 0px;
                 text-align: center;
+                text-transform: capitalize;
                 font-size: 14px;
                 color: #fff;
             }
@@ -342,6 +342,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 height: 170px;
                 margin: -10px 10px -10px -10px;
                 width: auto;
+                max-width: 300px;
                 float: left;
             }
         }
@@ -500,6 +501,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
 
                 .imagewrap--image {
                     width: 100%;
+                    max-width: 100%;
                     height: auto;
                     float: none;
                     margin: 0;

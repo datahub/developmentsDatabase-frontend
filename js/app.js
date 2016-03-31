@@ -15,6 +15,10 @@ $(document).ready(function() {
     }
 });
 
+window.devtracLayers = [];
+window.devtracPoints = {};
+window.map;
+
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
 window.map = new mapboxgl.Map({
     container: 'devtrac--mapbox',
@@ -121,7 +125,7 @@ map.on('click', function (e) {
     map.featuresAt(e.point, {
         radius: 7,
         includeGeometry: true,
-        layer: ['approved','proposed','under-construction','construction-completed']
+        layer: window.devtracLayers
     },
     function (err, features) {
 
@@ -129,8 +133,7 @@ map.on('click', function (e) {
             toggleInfoBox();
             return;
         }
-        var feature = features[0];
-        toggleInfoBox(feature.properties);
+        toggleInfoBox(features[0]);
 
     });
 
@@ -139,14 +142,51 @@ map.on('click', function (e) {
 map.on('mousemove', function (e) {
     map.featuresAt(e.point, {
         radius: 8,
-        layer: ['approved','proposed','under-construction','construction-completed']
+        layer: window.devtracLayers
     },
     function (err, features) {
         map.getCanvas().style.cursor = (!err && features.length) ? 'pointer' : '';
     });
 });
 
-function populateFilters(devs, hoods) {
+var highlightPt = function(geo) {
+    if (geo) {
+
+        if (map.getLayer('highlight')) {
+            map.removeLayer('highlight');
+            map.removeSource('single-point');
+        }
+
+        map.addSource('single-point', {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": [{
+                    "geometry": geo,
+                    "type": "Feature",
+                    "properties": {}
+                }]
+            }
+        });
+
+        map.addLayer({
+            "id": "highlight",
+            "source": "single-point",
+            "type": "circle",
+            "paint": {
+                "circle-radius": 11,
+                "circle-color": "#ffffff",
+                "circle-opacity": .85
+            }
+        }, window.devtracLayers[0]);
+
+    } else if (map.getLayer('highlight')) {
+        map.removeLayer('highlight');
+        map.removeSource('single-point');
+    }
+}
+
+var populateFilters = function(devs, hoods) {
     if (devs.length > 0) {
         var developersTpl = _tpl($('#template--developers').html());
         var dhtml = developersTpl({'developers': devs});
@@ -159,7 +199,7 @@ function populateFilters(devs, hoods) {
     }
 }
 
-function populateMap(markers) {
+var populateMap = function(markers) {
 
     map.addSource("markers", {
         "type": "geojson",
@@ -189,6 +229,7 @@ function populateMap(markers) {
                 },
                 "filter": ["==", "status", status]
             });
+            window.devtracLayers.push(status);
         }
     });
 
@@ -196,7 +237,7 @@ function populateMap(markers) {
 
 }
 
-function clearMap() {
+var clearMap = function() {
     map.removeSource("markers");
     if (map.getLayer('approved')) { map.removeLayer('approved'); }
     if (map.getLayer('proposed')) { map.removeLayer('proposed'); }
@@ -240,8 +281,10 @@ $('.toggleFullScreen').on('click',function(){toggleFullScreen()});
 var toggleInfoBox = function(data) {
     if (data) {
 
+        highlightPt(data.geometry);
+
         var infoboxTpl = _tpl($('#template--infobox').html());
-        var html = infoboxTpl(data);
+        var html = infoboxTpl(data.properties);
 
         $('.devtrac--infobox .infobox--inner').html(html);
         $('.devtrac--infobox').removeClass('infobox--hidden');
@@ -257,6 +300,8 @@ var toggleInfoBox = function(data) {
         }
 
     } else {
+
+        highlightPt();
 
         $('.devtrac--infobox').addClass('infobox--hidden');
 
@@ -410,7 +455,7 @@ var router = function(route) {
                 if (development) {
                     setTimeout(function() {
                         map.flyTo({center: development.geometry.coordinates, zoom:16});
-                        toggleInfoBox(development.properties);
+                        toggleInfoBox(development);
                     }, 500);
                 }
             } else if (paths[0] === 'search') {
