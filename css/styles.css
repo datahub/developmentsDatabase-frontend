@@ -51,6 +51,14 @@
 .pointer:hover {
   cursor: pointer; }
 
+@media screen and (max-width: 620px) {
+  .desktop--only {
+    display: none; } }
+
+@media screen and (min-width: 620px) {
+  .mobile--only {
+    display: none; } }
+
 /* legend */
 .devtrac--legend {
   position: absolute;
@@ -353,10 +361,10 @@
     top: 3%;
     bottom: initial;
     left: 3%;
-    right: 3%;
-    -webkit-overflow-scrolling: touch; }
+    right: 3%; }
     .devtrac--infobox .infobox--outer {
-      overflow-y: auto; }
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch; }
     .devtrac--infobox .infobox--inner .infobox--imagewrap {
       float: none;
       margin: -10px -10px 10px -10px; }
@@ -368,14 +376,19 @@
       .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--status {
         bottom: 0;
         left: 0; }
+    .devtrac--infobox .infobox--inner .infobox--details .details--location {
+      margin-bottom: 5px; }
+    .devtrac--infobox .infobox--inner .infobox--details .details--estimates {
+      float: none;
+      text-align: left; }
     .devtrac--infobox .infobox--inner .infobox--details .details--developer {
       display: block;
       margin-right: 0; }
     .devtrac--infobox .infobox--inner .infobox--details .details--architect {
       display: block; }
   .infobox--hidden {
-    transform: translateY(200%);
-    bottom: 0; }
+    transform: translateY(-110%);
+    top: 0; }
   .devtrac--touch {
     display: block;
     position: absolute;

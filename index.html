@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link href="css/styles.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="devtrac--infobox infobox--hidden animated">
+            <div class="devtrac--infobox animated infobox--hidden">
                 <div class="infobox--outer"><div class="infobox--inner"></div></div>
                 <i class="fa fa-times-circle pointer infobox--close"></i>
             </div>
@@ -142,9 +142,10 @@
         </div>
         <% } %>
         <div class="infobox--details">
-            <span class="details--estimates"><strong>Est. Completion Date: </strong><%= completionDate %><br><strong>Est. Cost: </strong><%= cost %></span>
+            <span class="details--estimates desktop--only"><strong>Est. Completion Date: </strong><%= completionDate %><br><strong>Est. Cost: </strong><%= cost %></span>
             <h3 class="details--name"><%= name %></h3>
             <p class="details--location"><%= address %> &mdash; <%= neighborhood %></p>
+            <span class="details--estimates mobile--only"><strong>Est. Completion Date: </strong><%= completionDate %><br><strong>Est. Cost: </strong><%= cost %></span>
             <p class="details--desc"><%= description %></p>
             <p class="details--who">
                 <% if (developer) { %><span class="details--developer"><strong>Developer: </strong><%= developer %></span><% } %>

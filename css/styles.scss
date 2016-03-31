@@ -75,6 +75,17 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     cursor: pointer;
 }
 
+@media screen and (max-width: 620px) {
+    .desktop--only {
+        display: none;
+    }
+}
+@media screen and (min-width: 620px) {
+    .mobile--only {
+        display: none;
+    }
+}
+
 /* legend */
 .devtrac--legend {
     position: absolute;
@@ -357,7 +368,6 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 margin: 5px 0;
                 padding: 0;
                 font-size: 12px;
-
             }
             .details--who {
                 @include reset;
@@ -477,10 +487,10 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         bottom: initial;
         left: 3%;
         right: 3%;
-        -webkit-overflow-scrolling: touch;
 
         .infobox--outer {
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .infobox--inner {
@@ -500,6 +510,13 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 }
             }
             .infobox--details {
+                .details--location {
+                    margin-bottom: 5px;
+                }
+                .details--estimates {
+                    float: none;
+                    text-align: left;
+                }
                 .details--developer {
                     display: block;
                     margin-right: 0;
@@ -512,8 +529,8 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
 
     }
     .infobox--hidden {
-        transform: translateY(200%);
-        bottom: 0;
+        transform: translateY(-110%);
+        top: 0;
     }
 
     .devtrac--touch {

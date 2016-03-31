@@ -49,10 +49,11 @@
 	window.$ = __webpack_require__(3);
 	var _tpl = __webpack_require__(4);
 	var _filter = __webpack_require__(55);
-	var _map = __webpack_require__(126);
-	var _uniq = __webpack_require__(128);
+	var _find = __webpack_require__(126);
+	var _map = __webpack_require__(129);
+	var _uniq = __webpack_require__(131);
 	var _property = __webpack_require__(124);
-	window._forEach = __webpack_require__(139);
+	window._forEach = __webpack_require__(142);
 	
 	$(document).ready(function() {
 	    if ($(window).width() < 621) {
@@ -89,11 +90,11 @@
 	
 	                console.log('using cached data');
 	
+	                window.devtracPoints = data.locations;
 	                var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
 	                var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
 	                populateFilters(developers, neighborhoods);
 	                populateMap(data.locations);
-	                window.devtracPoints = data.locations;
 	
 	            } else {
 	
@@ -105,11 +106,11 @@
 	                    dataType: 'jsonp',
 	                    crossDomain: true,
 	                    success: function(data) {
+	                        window.devtracPoints = data.locations;
 	                        var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
 	                        var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
 	                        populateFilters(developers, neighborhoods);
 	                        populateMap(data.locations);
-	                        window.devtracPoints = data.locations;
 	                        var storageString = JSON.stringify({
 	                            timestamp : Math.floor(Date.now() / 1000),
 	                            locations : data.locations
@@ -128,11 +129,11 @@
 	                dataType: 'jsonp',
 	                crossDomain: true,
 	                success: function(data) {
+	                    window.devtracPoints = data.locations;
 	                    var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
 	                    var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
 	                    populateFilters(developers, neighborhoods);
 	                    populateMap(data.locations);
-	                    window.devtracPoints = data.locations;
 	                    var storageString = JSON.stringify({
 	                        timestamp : Math.floor(Date.now() / 1000),
 	                        locations : data.locations
@@ -237,6 +238,8 @@
 	        }
 	    });
 	
+	    router();
+	
 	}
 	
 	function clearMap() {
@@ -301,7 +304,6 @@
 	
 	    } else {
 	
-	        $('.devtrac--infobox .infobox--inner').html('');
 	        $('.devtrac--infobox').addClass('infobox--hidden');
 	
 	        $('.infobox--close').unbind('click');
@@ -324,15 +326,16 @@
 	            var winWidth = $('#devtrac').width();
 	            var imgHeight = this.height;
 	            var imgWidth = this.width;
-	            var scaledHeight = this.height;
-	            var scaledWidth = this.width;
+	            var newHeight, scaledHeight;
+	            var newWidth, scaledWidth;
 	
 	            if (imgHeight > winHeight) {
-	                scaledHeight = Math.round(winHeight * .92);
-	                scaledWidth = Math.round((scaledHeight * imgWidth) / imgHeight);
-	            } else if (imgWidth > winWidth) {
+	                newHeight = Math.round(winHeight * .92);
+	                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
+	            }
+	            if (newWidth > winWidth) {
 	                scaledWidth = Math.round(winWidth * .92);
-	                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
+	                scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
 	            }
 	
 	            if (imgHeight > imgWidth) {
@@ -440,6 +443,34 @@
 	
 	    clearMap();
 	    populateMap({"type": "FeatureCollection", "features": filteredPoints});
+	}
+	var router = function(route) {
+	    if (route) {
+	        window.location.hash = route;
+	    } else {
+	        var hash = window.location.hash.substr(1);
+	        if (hash) {
+	            var paths = hash.split("/").filter(Boolean);
+	            if (paths[0] === 'development') {
+	                development = _find(window.devtracPoints.features, function(o){ return o.properties.id == paths[1] ? true : false;});
+	                if (development) {
+	                    setTimeout(function() {
+	                        map.flyTo({center: development.geometry.coordinates, zoom:16});
+	                        toggleInfoBox(development.properties);
+	                    }, 500);
+	                }
+	            } else if (paths[0] === 'search') {
+	                var hashFilters = paths[1].split("&").filter(Boolean);
+	                var filters = ['search','residential','commercial','manufacturing','mixed','approved','proposed','under-construction','construction-completed','developer','neighborhood'];
+	                _forEach(hashFilters, function(filter) {
+	                    if ($.inArray(filter.split("=")[0],filters) > -1) {
+	                        // apply filter
+	                        console.log(filter.split("=")[0] + ": " + filter.split("=")[1]);
+	                    }
+	                });
+	            }
+	        }
+	    }
 	}
 
 
@@ -14665,9 +14696,124 @@
 /* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var baseEach = __webpack_require__(58),
+	    baseFind = __webpack_require__(127),
+	    baseFindIndex = __webpack_require__(128),
+	    baseIteratee = __webpack_require__(63),
+	    isArray = __webpack_require__(35);
+	
+	/**
+	 * Iterates over elements of `collection`, returning the first element
+	 * `predicate` returns truthy for. The predicate is invoked with three arguments:
+	 * (value, index|key, collection).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Collection
+	 * @param {Array|Object} collection The collection to search.
+	 * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+	 * @returns {*} Returns the matched element, else `undefined`.
+	 * @example
+	 *
+	 * var users = [
+	 *   { 'user': 'barney',  'age': 36, 'active': true },
+	 *   { 'user': 'fred',    'age': 40, 'active': false },
+	 *   { 'user': 'pebbles', 'age': 1,  'active': true }
+	 * ];
+	 *
+	 * _.find(users, function(o) { return o.age < 40; });
+	 * // => object for 'barney'
+	 *
+	 * // The `_.matches` iteratee shorthand.
+	 * _.find(users, { 'age': 1, 'active': true });
+	 * // => object for 'pebbles'
+	 *
+	 * // The `_.matchesProperty` iteratee shorthand.
+	 * _.find(users, ['active', false]);
+	 * // => object for 'fred'
+	 *
+	 * // The `_.property` iteratee shorthand.
+	 * _.find(users, 'active');
+	 * // => object for 'barney'
+	 */
+	function find(collection, predicate) {
+	  predicate = baseIteratee(predicate, 3);
+	  if (isArray(collection)) {
+	    var index = baseFindIndex(collection, predicate);
+	    return index > -1 ? collection[index] : undefined;
+	  }
+	  return baseFind(collection, predicate, baseEach);
+	}
+	
+	module.exports = find;
+
+
+/***/ },
+/* 127 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of methods like `_.find` and `_.findKey`, without
+	 * support for iteratee shorthands, which iterates over `collection` using
+	 * `eachFunc`.
+	 *
+	 * @private
+	 * @param {Array|Object} collection The collection to search.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @param {Function} eachFunc The function to iterate over `collection`.
+	 * @param {boolean} [retKey] Specify returning the key of the found element instead of the element itself.
+	 * @returns {*} Returns the found element or its key, else `undefined`.
+	 */
+	function baseFind(collection, predicate, eachFunc, retKey) {
+	  var result;
+	  eachFunc(collection, function(value, key, collection) {
+	    if (predicate(value, key, collection)) {
+	      result = retKey ? key : value;
+	      return false;
+	    }
+	  });
+	  return result;
+	}
+	
+	module.exports = baseFind;
+
+
+/***/ },
+/* 128 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.findIndex` and `_.findLastIndex` without
+	 * support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to search.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseFindIndex(array, predicate, fromRight) {
+	  var length = array.length,
+	      index = fromRight ? length : -1;
+	
+	  while ((fromRight ? index-- : ++index < length)) {
+	    if (predicate(array[index], index, array)) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+	
+	module.exports = baseFindIndex;
+
+
+/***/ },
+/* 129 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var arrayMap = __webpack_require__(41),
 	    baseIteratee = __webpack_require__(63),
-	    baseMap = __webpack_require__(127),
+	    baseMap = __webpack_require__(130),
 	    isArray = __webpack_require__(35);
 	
 	/**
@@ -14720,7 +14866,7 @@
 
 
 /***/ },
-/* 127 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseEach = __webpack_require__(58),
@@ -14748,10 +14894,10 @@
 
 
 /***/ },
-/* 128 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseUniq = __webpack_require__(129);
+	var baseUniq = __webpack_require__(132);
 	
 	/**
 	 * Creates a duplicate-free version of an array, using
@@ -14779,14 +14925,14 @@
 
 
 /***/ },
-/* 129 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SetCache = __webpack_require__(130),
-	    arrayIncludes = __webpack_require__(132),
-	    arrayIncludesWith = __webpack_require__(135),
-	    cacheHas = __webpack_require__(136),
-	    createSet = __webpack_require__(137),
+	var SetCache = __webpack_require__(133),
+	    arrayIncludes = __webpack_require__(135),
+	    arrayIncludesWith = __webpack_require__(138),
+	    cacheHas = __webpack_require__(139),
+	    createSet = __webpack_require__(140),
 	    setToArray = __webpack_require__(101);
 	
 	/** Used as the size to enable large array optimizations. */
@@ -14856,11 +15002,11 @@
 
 
 /***/ },
-/* 130 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var MapCache = __webpack_require__(76),
-	    cachePush = __webpack_require__(131);
+	    cachePush = __webpack_require__(134);
 	
 	/**
 	 *
@@ -14887,7 +15033,7 @@
 
 
 /***/ },
-/* 131 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isKeyable = __webpack_require__(87);
@@ -14920,10 +15066,10 @@
 
 
 /***/ },
-/* 132 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIndexOf = __webpack_require__(133);
+	var baseIndexOf = __webpack_require__(136);
 	
 	/**
 	 * A specialized version of `_.includes` for arrays without support for
@@ -14942,10 +15088,10 @@
 
 
 /***/ },
-/* 133 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var indexOfNaN = __webpack_require__(134);
+	var indexOfNaN = __webpack_require__(137);
 	
 	/**
 	 * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -14975,7 +15121,7 @@
 
 
 /***/ },
-/* 134 */
+/* 137 */
 /***/ function(module, exports) {
 
 	/**
@@ -15004,7 +15150,7 @@
 
 
 /***/ },
-/* 135 */
+/* 138 */
 /***/ function(module, exports) {
 
 	/**
@@ -15032,7 +15178,7 @@
 
 
 /***/ },
-/* 136 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isKeyable = __webpack_require__(87);
@@ -15063,11 +15209,11 @@
 
 
 /***/ },
-/* 137 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Set = __webpack_require__(104),
-	    noop = __webpack_require__(138);
+	    noop = __webpack_require__(141);
 	
 	/**
 	 * Creates a set of `values`.
@@ -15084,7 +15230,7 @@
 
 
 /***/ },
-/* 138 */
+/* 141 */
 /***/ function(module, exports) {
 
 	/**
@@ -15109,11 +15255,11 @@
 
 
 /***/ },
-/* 139 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayEach = __webpack_require__(140),
-	    baseCastFunction = __webpack_require__(141),
+	var arrayEach = __webpack_require__(143),
+	    baseCastFunction = __webpack_require__(144),
 	    baseEach = __webpack_require__(58),
 	    isArray = __webpack_require__(35);
 	
@@ -15155,7 +15301,7 @@
 
 
 /***/ },
-/* 140 */
+/* 143 */
 /***/ function(module, exports) {
 
 	/**
@@ -15183,7 +15329,7 @@
 
 
 /***/ },
-/* 141 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var identity = __webpack_require__(123);

@@ -3,6 +3,7 @@ require("../css/styles.scss");
 window.$ = require("jquery");
 var _tpl = require("lodash/template");
 var _filter = require("lodash/filter");
+var _find = require("lodash/find");
 var _map = require("lodash/map");
 var _uniq = require("lodash/uniq");
 var _property = require("lodash/property");
@@ -43,11 +44,11 @@ map.on('style.load', function () {
 
                 console.log('using cached data');
 
+                window.devtracPoints = data.locations;
                 var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
                 var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
                 populateFilters(developers, neighborhoods);
                 populateMap(data.locations);
-                window.devtracPoints = data.locations;
 
             } else {
 
@@ -59,11 +60,11 @@ map.on('style.load', function () {
                     dataType: 'jsonp',
                     crossDomain: true,
                     success: function(data) {
+                        window.devtracPoints = data.locations;
                         var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
                         var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
                         populateFilters(developers, neighborhoods);
                         populateMap(data.locations);
-                        window.devtracPoints = data.locations;
                         var storageString = JSON.stringify({
                             timestamp : Math.floor(Date.now() / 1000),
                             locations : data.locations
@@ -82,11 +83,11 @@ map.on('style.load', function () {
                 dataType: 'jsonp',
                 crossDomain: true,
                 success: function(data) {
+                    window.devtracPoints = data.locations;
                     var developers = _uniq(_map(data.locations.features, _property('properties.developer')));
                     var neighborhoods = _uniq(_map(data.locations.features, _property('properties.neighborhood')));
                     populateFilters(developers, neighborhoods);
                     populateMap(data.locations);
-                    window.devtracPoints = data.locations;
                     var storageString = JSON.stringify({
                         timestamp : Math.floor(Date.now() / 1000),
                         locations : data.locations
@@ -191,6 +192,8 @@ function populateMap(markers) {
         }
     });
 
+    router();
+
 }
 
 function clearMap() {
@@ -255,7 +258,6 @@ var toggleInfoBox = function(data) {
 
     } else {
 
-        $('.devtrac--infobox .infobox--inner').html('');
         $('.devtrac--infobox').addClass('infobox--hidden');
 
         $('.infobox--close').unbind('click');
@@ -278,15 +280,16 @@ var lighbox = function(imageUrl) {
             var winWidth = $('#devtrac').width();
             var imgHeight = this.height;
             var imgWidth = this.width;
-            var scaledHeight = this.height;
-            var scaledWidth = this.width;
+            var newHeight, scaledHeight;
+            var newWidth, scaledWidth;
 
             if (imgHeight > winHeight) {
-                scaledHeight = Math.round(winHeight * .92);
-                scaledWidth = Math.round((scaledHeight * imgWidth) / imgHeight);
-            } else if (imgWidth > winWidth) {
+                newHeight = Math.round(winHeight * .92);
+                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
+            }
+            if (newWidth > winWidth) {
                 scaledWidth = Math.round(winWidth * .92);
-                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
+                scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
             }
 
             if (imgHeight > imgWidth) {
@@ -394,4 +397,32 @@ var filterPoints = function(filters) {
 
     clearMap();
     populateMap({"type": "FeatureCollection", "features": filteredPoints});
+}
+var router = function(route) {
+    if (route) {
+        window.location.hash = route;
+    } else {
+        var hash = window.location.hash.substr(1);
+        if (hash) {
+            var paths = hash.split("/").filter(Boolean);
+            if (paths[0] === 'development') {
+                development = _find(window.devtracPoints.features, function(o){ return o.properties.id == paths[1] ? true : false;});
+                if (development) {
+                    setTimeout(function() {
+                        map.flyTo({center: development.geometry.coordinates, zoom:16});
+                        toggleInfoBox(development.properties);
+                    }, 500);
+                }
+            } else if (paths[0] === 'search') {
+                var hashFilters = paths[1].split("&").filter(Boolean);
+                var filters = ['search','residential','commercial','manufacturing','mixed','approved','proposed','under-construction','construction-completed','developer','neighborhood'];
+                _forEach(hashFilters, function(filter) {
+                    if ($.inArray(filter.split("=")[0],filters) > -1) {
+                        // apply filter
+                        console.log(filter.split("=")[0] + ": " + filter.split("=")[1]);
+                    }
+                });
+            }
+        }
+    }
 }
