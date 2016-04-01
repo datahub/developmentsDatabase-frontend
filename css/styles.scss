@@ -482,10 +482,10 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
 
     .devtrac--infobox {
         height: initial;
-        max-height: 96%;
+        max-height: 94%;
         width: 94%;
         top: 3%;
-        bottom: initial;
+        bottom: 3%;
         left: 3%;
         right: 3%;
 
@@ -525,6 +525,9 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 }
                 .details--architect {
                     display: block;
+                }
+                .details--coverage {
+                    margin-bottom: 10px;
                 }
             }
         }

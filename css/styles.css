@@ -357,10 +357,10 @@
       font-size: 12px; }
   .devtrac--infobox {
     height: initial;
-    max-height: 96%;
+    max-height: 94%;
     width: 94%;
     top: 3%;
-    bottom: initial;
+    bottom: 3%;
     left: 3%;
     right: 3%; }
     .devtrac--infobox .infobox--outer {
@@ -388,6 +388,8 @@
       margin-right: 0; }
     .devtrac--infobox .infobox--inner .infobox--details .details--architect {
       display: block; }
+    .devtrac--infobox .infobox--inner .infobox--details .details--coverage {
+      margin-bottom: 10px; }
   .infobox--hidden {
     transform: translateY(-110%);
     top: 0; }
