@@ -92,7 +92,7 @@
 
                         <div class="filterbox--inputwrapper">
                             <select name="neighborhood" class="holder--neighborhoods pointer">
-                                <option value="" data-center="[lon,lat,zoom]">All Neighborhoods</option>
+                                <option value="" data-center="[-87.9800,43.0500,10]">All Neighborhoods</option>
                             </select>
                         </div>
 
@@ -127,7 +127,7 @@
     </div>
     <script type="text/template" id="template--neighborhoods">
         <% _forEach(neighborhoods, function(neighborhood) { %>
-            <option value="<%= neighborhood %>" data-center="[lon,lat,zoom]"><%= neighborhood %></option>
+            <option value="<%= neighborhood.name %>" data-center="<%= neighborhood.center %>"><%= neighborhood.name %></option>
         <% }); %>
     </script>
     <script type="text/template" id="template--developers">

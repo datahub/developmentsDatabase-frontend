@@ -427,6 +427,15 @@ var filterPoints = function(filters) {
         // neightborhood
         if (filters.neighborhood !== "" && props.neighborhood.trim() !== filters.neighborhood.trim()) {
             var neighborhood = false;
+        } else {
+
+            var center = $('.holder--neighborhoods option[value="'+filters.neighborhood+'"]').data('center');
+            if (center.length > 0) {
+                map.flyTo({center: [center[0],center[1]], zoom:center[2]});
+            } else {
+                map.flyTo({center: [-87.9800,43.0500], zoom:10});
+            }
+
         }
 
         // developer
