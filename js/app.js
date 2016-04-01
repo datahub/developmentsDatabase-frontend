@@ -233,8 +233,8 @@ var populateMap = function(markers) {
     });
 
     if (window.firstRun) {
-        router('go');
         window.firstRun = false;
+        router('go');
     }
 }
 
@@ -244,6 +244,7 @@ var clearMap = function() {
     if (map.getLayer('proposed')) { map.removeLayer('proposed'); }
     if (map.getLayer('under-construction')) { map.removeLayer('under-construction'); }
     if (map.getLayer('construction-completed')) { map.removeLayer('construction-completed'); }
+    window.devtracLayers = [];
 }
 
 var toggleFullScreen = function() {
@@ -387,46 +388,6 @@ var setFilters = function(filterOptions) {
     if (filterOptions.search !== "") {
         $('#devtrac--form input[name=search]').val(filterOptions.search);
     }
-    if (filterOptions.residential === "on") {
-        $('#devtrac--form input[name=residential]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=residential]').prop("checked", false);
-    }
-    if (filterOptions.commercial === "on") {
-        $('#devtrac--form input[name=commercial]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=commercial]').prop("checked", false);
-    }
-    if (filterOptions.manufacturing === "on") {
-        $('#devtrac--form input[name=manufacturing]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=manufacturing]').prop("checked", false);
-    }
-    if (filterOptions.mixed === "on") {
-        $('#devtrac--form input[name=mixed]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=mixed]').prop("checked", false);
-    }
-    if (filterOptions.approved === "on") {
-        $('#devtrac--form input[name=approved]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=approved]').prop("checked", false);
-    }
-    if (filterOptions.proposed === "on") {
-        $('#devtrac--form input[name=proposed]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=proposed]').prop("checked", false);
-    }
-    if (filterOptions.underConstruction === "on") {
-        $('#devtrac--form input[name=underConstruction]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=underConstruction]').prop("checked", false);
-    }
-    if (filterOptions.constructionCompleted === "on") {
-        $('#devtrac--form input[name=constructionCompleted]').prop("checked", true);
-    } else {
-        $('#devtrac--form input[name=constructionCompleted]').prop("checked", false);
-    }
     if (filterOptions.developer !== "") {
         $('#devtrac--form select[name=developer] option[value="'+filterOptions.developer+'"]').prop("selected", true);
     }
@@ -442,7 +403,7 @@ var getFilters = function() {
         name = $(this).attr('name');
         value = $(this).attr('value');
         filters[name] = value;
-        if (value !== ''){
+        if ((name === 'search' || name === 'developer' || name === 'neighborhood') && value !== '') {
             hash += "&" + name + "=" + value;
         }
     });
@@ -453,7 +414,7 @@ $('#devtrac--form input[type=text]').on('keyup',_throttle(getFilters, 500, {'lea
 $('#devtrac--form input[type=checkbox], #devtrac--form select').on('change',getFilters);
 
 var filterPoints = function(filters) {
-    filteredPoints = _filter(devtracPoints.features, function(point) {
+    filteredPts = _filter(devtracPoints.features, function(point) {
         var props = point.properties;
 
         var search = true, neighborhood = true, developer = true;
@@ -509,13 +470,12 @@ var filterPoints = function(filters) {
 
     });
 
-    if (filters.search !== "" && filteredPoints.length > 0) {
-        var list = _map(filteredPoints, _property('properties.name'));
-    }
-
+    //if (filters.search !== "" && filteredPts.length > 0) {
+        //var list = _map(filteredPts, _property('properties.name'));
+    //}
     //TODO: refactor to use mapbox layer filters instead of entire map redraw
     clearMap();
-    populateMap({"type": "FeatureCollection", "features": filteredPoints});
+    populateMap({"type": "FeatureCollection", "features": filteredPts});
 
 }
 
@@ -526,7 +486,7 @@ var router = function(action,route) {
         var hash = window.location.hash.substr(1);
         if (hash) {
             var paths = hash.split("/").filter(Boolean);
-            if (paths[0] === 'development') {
+            if (paths[0] === 'development' && paths[1]) {
                 development = _find(window.devtracPoints.features, function(o){ return o.properties.id == paths[1] ? true : false;});
                 if (development) {
                     setTimeout(function() {
@@ -534,21 +494,21 @@ var router = function(action,route) {
                         toggleInfoBox(development);
                     }, 500);
                 }
-            } else if (paths[0] === 'search') {
+            } else if (paths[0] === 'search' && paths[1]) {
                 var hashFilters = paths[1].split("&").filter(Boolean);
-                var filterOptions = ['search','residential','commercial','manufacturing','mixed','approved','proposed','under-construction','construction-completed','developer','neighborhood'];
+                var filterOptions = ['search','developer','neighborhood'];
                 var filters = {
                     'search':'',
-                    'residential': 'on',
+                    'developer': '',
+                    'neighborhood': '',
                     'commercial': 'on',
+                    'residential': 'on',
                     'manufacturing': 'on',
                     'mixed': 'on',
                     'approved': 'on',
                     'proposed': 'on',
-                    'under-construction': 'on',
-                    'construction-completed': 'on',
-                    'developer': '',
-                    'neighborhood': '',
+                    'underConstruction': 'on',
+                    'constructionCompleted': 'on'
                 };
                 _forEach(hashFilters, function(filter) {
                     var filterParts = filter.split("=");
@@ -556,8 +516,8 @@ var router = function(action,route) {
                         filters[filterParts[0]] = filterParts[1];
                     }
                 });
-                //filterPoints(filters);
-                //setFilters(filters);
+                filterPoints(filters);
+                setFilters(filters);
             }
         }
     }
