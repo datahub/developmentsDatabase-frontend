@@ -33,7 +33,7 @@
 
                     <h1 class="filterbox--title pointer toggleFilterBox">Filter developments<i class="fa fa-caret-down animated"></i></h1>
 
-                    <form id="devtrac--form">
+                    <div id="devtrac--form">
                         <div class="filterbox--inputwrapper">
                             <input type="text" class="search--autocomplete" name="search" placeholder="Search project name or address">
                         </div>
@@ -41,24 +41,24 @@
                         <div class="filterbox--inputwrapper filters--usage">
                             <p class="filterbox--header">Usage</p>
                             <div class="inputwrapper--twocol">
-                                <label class="inputwrapper--label">
-                                    <input type="checkbox" name="commercial" checked="checked">
+                                <label class="inputwrapper--label pointer">
+                                    <input type="checkbox" name="commercial" checked="checked" class="pointer">
                                     Commercial
                                 </label>
                                 <br>
-                                <label class="inputwrapper--label">
-                                    <input type="checkbox" name="residential" checked="checked">
+                                <label class="inputwrapper--label pointer">
+                                    <input type="checkbox" name="residential" checked="checked" class="pointer">
                                     Residential
                                 </label>
                             </div>
                             <div class="inputwrapper--twocol">
-                                <label class="inputwrapper--label">
-                                    <input type="checkbox" name="manufacturing" checked="checked">
+                                <label class="inputwrapper--label pointer">
+                                    <input type="checkbox" name="manufacturing" checked="checked" class="pointer">
                                     Manufacturing
                                 </label>
                                 <br>
-                                <label class="inputwrapper--label">
-                                    <input type="checkbox" name="mixed" checked="checked">
+                                <label class="inputwrapper--label pointer">
+                                    <input type="checkbox" name="mixed" checked="checked" class="pointer">
                                     Mixed
                                 </label>
                             </div>
@@ -67,42 +67,42 @@
                         <div class="filterbox--inputwrapper filters--status">
                             <p class="filterbox--header">Project Status</p>
                             <div class="inputwrapper--twocol">
-                                <label class="inputwrapper--label">
-                                    <input type="checkbox" class="proposed" name="proposed" checked="checked">
+                                <label class="inputwrapper--label pointer">
+                                    <input type="checkbox" class="proposed pointer" name="proposed" checked="checked">
                                     Proposed
                                 </label>
                             </div>
                             <div class="inputwrapper--twocol">
-                                <label class="inputwrapper--label">
-                                    <input type="checkbox" class="approved" name="approved" checked="checked">
+                                <label class="inputwrapper--label pointer">
+                                    <input type="checkbox" class="approved pointer" name="approved" checked="checked">
                                     Approved
                                 </label>
                             </div>
                             <br>
-                            <label class="inputwrapper--label">
-                                <input type="checkbox" class="under" name="underConstruction" checked="checked">
+                            <label class="inputwrapper--label pointer">
+                                <input type="checkbox" class="under pointer" name="underConstruction" checked="checked">
                                 Under Construction
                             </label>
                             <br>
-                            <label class="inputwrapper--label">
-                                <input type="checkbox" class="completed" name="constructionCompleted" checked="checked">
+                            <label class="inputwrapper--label pointer">
+                                <input type="checkbox" class="completed pointer" name="constructionCompleted" checked="checked">
                                 Construction Completed
                             </label>
                         </div>
 
                         <div class="filterbox--inputwrapper">
-                            <select name="neighborhood" class="holder--neighborhoods">
+                            <select name="neighborhood" class="holder--neighborhoods pointer">
                                 <option value="" data-center="[lon,lat,zoom]">All Neighborhoods</option>
                             </select>
                         </div>
 
                         <div class="filterbox--inputwrapper">
-                            <select name="developer" class="holder--developers">
+                            <select name="developer" class="holder--developers pointer">
                                 <option value="">All Developers</option>
                             </select>
                         </div>
 
-                    </form>
+                    </div>
 
                 </div>
             </div>

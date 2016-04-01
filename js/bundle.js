@@ -445,9 +445,9 @@
 	var getFilters = function() {
 	    filters = {};
 	    hash = "";
-	    $.each($('#devtrac--form').serializeArray(),function() {
-	        name = $(this).attr('name');
-	        value = $(this).attr('value');
+	    $('#devtrac--form input, #devtrac--form select').each(function() {
+	        name = $(this).prop('name');
+	        value = $(this).prop('value');
 	        filters[name] = value;
 	        if ((name === 'search' || name === 'developer' || name === 'neighborhood') && value !== '') {
 	            hash += "&" + name + "=" + value;
