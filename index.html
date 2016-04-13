@@ -8,6 +8,13 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js"></script>
+    <style>
+    /* similuated page */
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -140,6 +147,8 @@
         <div class="infobox--imagewrap lightbox--open pointer">
             <img class="imagewrap--image" src="<%= image %>"><span class="imagewrap--status status--<%= status %>"><%= statusNice %></span>
         </div>
+        <% } else { %>
+            <div class="infobox--statusbar status--<%= status %>"></div>
         <% } %>
         <div class="infobox--details">
             <span class="details--estimates desktop--only"><strong><% if (completionDate.indexOf("+") === 0) { %>Est. <% } %>Completion Date: </strong><% print(completionDate.replace("+","")) %><br><strong>Est. Cost: </strong><%= cost %></span>

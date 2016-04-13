@@ -68,6 +68,7 @@ map.on('mousemove', function (e) {
     });
 });
 
+//TODO: clean up this functon
 var getCacheData = function() {
     if (window.localStorage) {
 

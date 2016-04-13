@@ -16,7 +16,8 @@
     "webpack": "^1.12.14"
   },
   "scripts": {
-    "start": "webpack"
+    "dev": "webpack --watch",
+    "build": "webpack -p"
   },
   "repository": {
     "type": "git",

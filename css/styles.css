@@ -1,12 +1,3 @@
-/* similuated page */
-.container {
-  max-width: 1000px;
-  margin: 30px auto;
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.4;
-  color: #222; }
-
 /* fullscreen */
 .container--fullscreen {
   position: absolute;
@@ -23,7 +14,11 @@
 /* interactive wrapper */
 #devtrac {
   position: relative;
-  overflow: hidden; }
+  overflow: hidden;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #222; }
 
 /* map container */
 #devtrac--mapbox {
@@ -259,6 +254,23 @@
         width: auto;
         max-width: 300px;
         float: left; }
+    .devtrac--infobox .infobox--inner .infobox--statusbar {
+      float: left;
+      position: relative;
+      top: -10px;
+      left: -10px;
+      height: 100%;
+      width: 10px;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px; }
+    .devtrac--infobox .infobox--inner .status--proposed {
+      background: #FF7676; }
+    .devtrac--infobox .infobox--inner .status--approved {
+      background: #F6C90E; }
+    .devtrac--infobox .infobox--inner .status--under-construction {
+      background: #466C95; }
+    .devtrac--infobox .infobox--inner .status--construction-completed {
+      background: #5DAE8B; }
     .devtrac--infobox .infobox--inner .infobox--details .details--name {
       margin: 0;
       padding: 0;
@@ -378,6 +390,17 @@
       .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--status {
         bottom: 0;
         left: 0; }
+    .devtrac--infobox .infobox--inner .infobox--statusbar {
+      float: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 10px;
+      width: 100%;
+      right: 0;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      border-bottom-left-radius: 0; }
     .devtrac--infobox .infobox--inner .infobox--details .details--location {
       margin-bottom: 5px; }
     .devtrac--infobox .infobox--inner .infobox--details .details--estimates {

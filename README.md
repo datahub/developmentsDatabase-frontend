@@ -16,7 +16,7 @@ git pull
 ```
 Launch the dev environment
 ```
-npm start
+npm run dev
 ```
 ---
 ### DO WORK
@@ -37,5 +37,5 @@ git push
 ---
 Also: running the code below will build for production
 ```
-webpack -p
+npm run build
 ```
