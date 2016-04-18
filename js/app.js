@@ -461,7 +461,7 @@ var filterPoints = function(filters) {
         var status = (approved || proposed || underConstruction || constructionCompleted);
 
         // usage
-        var commercial = false, residential = false, manufacturing = false, mixed = false;
+        var commercial = false, residential = false, manufacturing = false, mixed = false, institutional = false;
         if (filters.commercial === "on" && props.usage === "commercial") {
             var commercial = true;
         }
@@ -474,7 +474,12 @@ var filterPoints = function(filters) {
         if (filters.mixed === "on" && props.usage === "mixed-use-commercial-residential") {
             var mixed = true;
         }
-        var usage = (commercial || residential || manufacturing || mixed);
+        if (filters.institutional === "on" && props.usage === "institutional") {
+            var institutional = true;
+        }
+        var usage = (commercial || residential || manufacturing || mixed || institutional);
+
+
 
         return (search && neighborhood && developer && status && usage);
 
@@ -515,6 +520,7 @@ var router = function(action,route) {
                     'residential': 'on',
                     'manufacturing': 'on',
                     'mixed': 'on',
+                    'institutional': 'on',
                     'approved': 'on',
                     'proposed': 'on',
                     'underConstruction': 'on',
