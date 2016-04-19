@@ -14,7 +14,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
 
 
 /* fullscreen */
-.container--fullscreen {
+.container--fullscreen.container {
     position: absolute;
     top: 0;
     right: 0;
@@ -78,6 +78,38 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     .mobile--only {
         display: none;
     }
+}
+
+.lightbox--wrapper.landscape{
+    
+    height: 90%;
+    
+}
+
+.lightbox--wrapper{
+    min-height: 300px;
+    position: relative;
+    margin: 3% auto 3% auto;
+}
+
+.lightbox--wrapper.portrait{
+    width: 100%;
+}
+
+.portrait .lightbox--img{
+    width: auto;
+    height: 90%
+}
+
+.landscape .lightbox--img{
+    height: 90%;
+    width: auto;
+}
+
+.lightbox--img{
+    vertical-align: middle;
+
+    margin: 0
 }
 
 /* legend */
@@ -442,18 +474,6 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     text-align: center;
     background: rgba(0,0,0,.8);
 
-    img {
-        margin-top: 2%;
-    }
-
-    .landscape {
-        width: 100%;
-        height: auto;
-    }
-    .portrait {
-        width: auto;
-        height: 100%;
-    }
     .fa-times-circle{
         position: absolute;
         top: 5px;

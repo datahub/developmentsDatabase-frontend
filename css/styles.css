@@ -1,5 +1,5 @@
 /* fullscreen */
-.container--fullscreen {
+.container--fullscreen.container {
   position: absolute;
   top: 0;
   right: 0;
@@ -7,7 +7,7 @@
   left: 0;
   max-width: 100%;
   margin: 0; }
-  .container--fullscreen #devtrac--mapbox {
+  .container--fullscreen.container #devtrac--mapbox {
     height: 100%;
     width: 100%; }
 
@@ -53,6 +53,29 @@
 @media screen and (min-width: 620px) {
   .mobile--only {
     display: none; } }
+
+.lightbox--wrapper.landscape {
+  height: 90%; }
+
+.lightbox--wrapper {
+  min-height: 300px;
+  position: relative;
+  margin: 3% auto 3% auto; }
+
+.lightbox--wrapper.portrait {
+  width: 100%; }
+
+.portrait .lightbox--img {
+  width: auto;
+  height: 90%; }
+
+.landscape .lightbox--img {
+  height: 90%;
+  width: auto; }
+
+.lightbox--img {
+  vertical-align: middle;
+  margin: 0; }
 
 /* legend */
 .devtrac--legend {
@@ -332,14 +355,6 @@
   z-index: 5;
   text-align: center;
   background: rgba(0, 0, 0, 0.8); }
-  .devtrac--lighbox img {
-    margin-top: 2%; }
-  .devtrac--lighbox .landscape {
-    width: 100%;
-    height: auto; }
-  .devtrac--lighbox .portrait {
-    width: auto;
-    height: 100%; }
   .devtrac--lighbox .fa-times-circle {
     position: absolute;
     top: 5px;
