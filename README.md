@@ -2,6 +2,10 @@
 Front-end for Daykin's Development Tracker
 - add #fresh to the url to fetch new data, otherwise data is cached for an hour
 
+Request doc: https://jmg-my.sharepoint.com/personal/michael_andre_jmg_com/_layouts/15/guestaccess.aspx?guestaccesstoken=zxiUITEaqJZujcc%2flbNM9512pUEwNUiOfveqtYn31Sw%3d&docid=2_04126f04ecb6b4e10b07affc210a0b587
+
+Scope doc: https://jmg-my.sharepoint.com/personal/michael_andre_jmg_com/_layouts/15/guestaccess.aspx?guestaccesstoken=32fwLGHKTcy0svAycRzslDqolgETlMeFUp2ADnpebwQ%3d&docid=2_002ad4a0d32be429a823dec6026cc45ae
+
 Open a console session in the project folder:
 
 Get project for first time
