@@ -254,7 +254,7 @@ var toggleFullScreen = function() {
     if ($('.container').hasClass('container--fullscreen')) {
 
         $('.toggleFullScreen').removeClass('fa-compress')
-        $('.toggleFullScreen').addClass('fa-arrows-alt')
+        $('.toggleFullScreen').addClass('fa-expand')
 
 
         if ($(window).width() < 621) {
@@ -269,7 +269,7 @@ var toggleFullScreen = function() {
 
 
         $('.toggleFullScreen').addClass('fa-compress')
-        $('.toggleFullScreen').removeClass('fa-arrows-alt')
+        $('.toggleFullScreen').removeClass('fa-expand')
 
         if ($(window).width() < 621) {
             $('.devtrac--touch').hide();
@@ -387,11 +387,9 @@ var lighbox = function(imageUrl) {
         });
 
     } else {
-
         $('.devtrac--lighbox').hide();
         $('.lightbox--close').unbind('click');
         $('.lightbox--wrapper').remove();
-
     }
 }
 

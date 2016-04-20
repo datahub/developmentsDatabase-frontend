@@ -54,29 +54,6 @@
   .mobile--only {
     display: none; } }
 
-.lightbox--wrapper.landscape {
-  height: 90%; }
-
-.lightbox--wrapper {
-  min-height: 300px;
-  position: relative;
-  margin: 3% auto 3% auto; }
-
-.lightbox--wrapper.portrait {
-  width: 100%; }
-
-.portrait .lightbox--img {
-  width: auto;
-  height: 90%; }
-
-.landscape .lightbox--img {
-  height: 90%;
-  width: auto; }
-
-.lightbox--img {
-  vertical-align: middle;
-  margin: 0; }
-
 /* legend */
 .devtrac--legend {
   position: absolute;
@@ -277,6 +254,8 @@
         width: auto;
         max-width: 300px;
         float: left; }
+      .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--image:hover {
+        opacity: 0.8; }
     .devtrac--infobox .infobox--inner .infobox--statusbar {
       float: left;
       position: relative;
@@ -363,6 +342,23 @@
     color: #fff;
     font-size: 30px;
     line-height: 30px; }
+  .devtrac--lighbox .lightbox--wrapper {
+    min-height: 300px;
+    position: relative;
+    margin: 3% auto 3% auto; }
+    .devtrac--lighbox .lightbox--wrapper .landscape {
+      height: 90%; }
+    .devtrac--lighbox .lightbox--wrapper .portrait {
+      width: 100%; }
+  .devtrac--lighbox .portrait .lightbox--img {
+    width: auto;
+    height: 90%; }
+  .devtrac--lighbox .landscape .lightbox--img {
+    height: 90%;
+    width: auto; }
+  .devtrac--lighbox .lightbox--img {
+    vertical-align: middle;
+    margin: 0; }
 
 .infobox--hidden {
   transform: translateY(200px); }

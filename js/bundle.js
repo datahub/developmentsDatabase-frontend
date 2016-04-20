@@ -300,7 +300,7 @@
 	    if ($('.container').hasClass('container--fullscreen')) {
 	
 	        $('.toggleFullScreen').removeClass('fa-compress')
-	        $('.toggleFullScreen').addClass('fa-arrows-alt')
+	        $('.toggleFullScreen').addClass('fa-expand')
 	
 	
 	        if ($(window).width() < 621) {
@@ -315,7 +315,7 @@
 	
 	
 	        $('.toggleFullScreen').addClass('fa-compress')
-	        $('.toggleFullScreen').removeClass('fa-arrows-alt')
+	        $('.toggleFullScreen').removeClass('fa-expand')
 	
 	        if ($(window).width() < 621) {
 	            $('.devtrac--touch').hide();
@@ -433,11 +433,9 @@
 	        });
 	
 	    } else {
-	
 	        $('.devtrac--lighbox').hide();
 	        $('.lightbox--close').unbind('click');
 	        $('.lightbox--wrapper').remove();
-	
 	    }
 	}
 	

@@ -12,7 +12,6 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     padding: 0;
 }
 
-
 /* fullscreen */
 .container--fullscreen.container {
     position: absolute;
@@ -80,37 +79,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     }
 }
 
-.lightbox--wrapper.landscape{
-    
-    height: 90%;
-    
-}
 
-.lightbox--wrapper{
-    min-height: 300px;
-    position: relative;
-    margin: 3% auto 3% auto;
-}
-
-.lightbox--wrapper.portrait{
-    width: 100%;
-}
-
-.portrait .lightbox--img{
-    width: auto;
-    height: 90%
-}
-
-.landscape .lightbox--img{
-    height: 90%;
-    width: auto;
-}
-
-.lightbox--img{
-    vertical-align: middle;
-
-    margin: 0
-}
 
 /* legend */
 .devtrac--legend {
@@ -370,6 +339,10 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
                 max-width: 300px;
                 float: left;
             }
+
+            .imagewrap--image:hover{
+                opacity: 0.8
+            }
         }
         .infobox--statusbar {
             float: left;
@@ -482,6 +455,35 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         color: #fff;
         font-size: 30px;
         line-height: 30px;
+    }
+
+    .lightbox--wrapper{
+        min-height: 300px;
+        position: relative;
+        margin: 3% auto 3% auto;
+        
+        .landscape{
+            height: 90%;
+        }
+
+        .portrait{
+            width: 100%;
+        }
+    }
+
+    .portrait .lightbox--img{
+        width: auto;
+        height: 90%
+    }
+
+    .landscape .lightbox--img{
+        height: 90%;
+        width: auto;
+    }
+
+    .lightbox--img{
+        vertical-align: middle;
+        margin: 0
     }
 }
 
