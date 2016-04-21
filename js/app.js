@@ -344,10 +344,16 @@ var lighbox = function(imageUrl) {
             var imgWidth = this.width;
             var newHeight = 0, scaledHeight = 0;
             var newWidth = 0, scaledWidth = 0;
+            var maxwidth = '';
 
             if (imgHeight > winHeight) {
                 newHeight = Math.round(winHeight * .82);
                 newWidth = Math.round((newHeight * imgWidth) / imgHeight);
+            }
+            
+            if (imgWidth > winWidth){
+                newWidth = Math.round(winWidth * .82);
+                newHeight = Math.round((newWidth * imgHeight) / imgWidth);
             }
 
             if (newWidth > winWidth) {
@@ -360,11 +366,6 @@ var lighbox = function(imageUrl) {
                 scaledWidth = newWidth;
                 scaledHeight = newHeight;
             }
-
-            if (imgHeight>winHeight && imgWidth > winWidth){
-                newHeight = Math.round(winHeight * .82);
-                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
-            }
             
             if (imgHeight > imgWidth) {
                 var className = 'portrait';
@@ -372,13 +373,13 @@ var lighbox = function(imageUrl) {
             } else {
                 var className = 'landscape';
                 var style = "width: " + scaledWidth + "px;";
-                // if (scaledHeight < winHeight) {
-                //     var diff = (winHeight - scaledHeight) / 3;
-                //     // style = style + "margin-top:" + diff + "px;";
-                // }
             }
 
-            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img class="lightbox--img ' + '" src="'+ imageUrl + '"></div>');
+            if (scaledWidth!=0){
+                maxwidth = 'style="max-width:'+scaledWidth+'px;"max-height:'+scaledHeight+'px;""'
+            };
+
+            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+maxwidth+' class="lightbox--img" src="'+ imageUrl + '"></div>');
 
             $('.lighbox--close').on('click',function() {
                lighbox();
@@ -421,6 +422,7 @@ var getFilters = function() {
             hash += "&" + name + "=" + value;
         }
     });
+    console.log(filters)
     filterPoints(filters);
     router('set','/search/' + hash);
 }
@@ -491,9 +493,7 @@ var filterPoints = function(filters) {
             var institutional = true;
         }
         var usage = (commercial || residential || manufacturing || mixed || institutional);
-
-
-
+        console.log(filters)
         return (search && neighborhood && developer && status && usage);
 
     });
@@ -539,6 +539,7 @@ var router = function(action,route) {
                     'underConstruction': 'on',
                     'constructionCompleted': 'on'
                 };
+                console.log(filters)
                 _forEach(hashFilters, function(filter) {
                     var filterParts = filter.split("=");
                     if ($.inArray(filterParts[0],filterOptions) > -1) {

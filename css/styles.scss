@@ -471,19 +471,11 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         }
     }
 
-    .portrait .lightbox--img{
-        width: auto;
-        height: 90%
-    }
-
-    .landscape .lightbox--img{
-        height: 90%;
-        width: auto;
-    }
-
     .lightbox--img{
         vertical-align: middle;
-        margin: 0
+        margin: 0;
+        height: 90%;
+        width: auto;
     }
 }
 
