@@ -396,8 +396,8 @@
 	                newHeight = Math.round(winHeight * .82);
 	                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
 	            }
-	            
-	            if (imgWidth > winWidth){
+	
+	            if (imgWidth > winWidth) {
 	                newWidth = Math.round(winWidth * .82);
 	                newHeight = Math.round((newWidth * imgHeight) / imgWidth);
 	            }
@@ -412,7 +412,7 @@
 	                scaledWidth = newWidth;
 	                scaledHeight = newHeight;
 	            }
-	            
+	
 	            if (imgHeight > imgWidth) {
 	                var className = 'portrait';
 	                var style = "height: " + scaledHeight + "px;";
@@ -421,7 +421,7 @@
 	                var style = "width: " + scaledWidth + "px;";
 	            }
 	
-	            if (scaledWidth!=0){
+	            if (scaledWidth !== 0) {
 	                maxwidth = 'style="max-width:'+scaledWidth+'px;"max-height:'+scaledHeight+'px;""'
 	            };
 	
@@ -462,13 +462,17 @@
 	    hash = "";
 	    $('#devtrac--form input, #devtrac--form select').each(function() {
 	        name = $(this).prop('name');
-	        value = $(this).prop('value');
+	        if (this.type === "checkbox") {
+	            value = $(this).prop('checked');
+	        } else {
+	            value = $(this).prop('value');
+	        }
+	        console.log("name: " + name + " - value: " + value);
 	        filters[name] = value;
 	        if ((name === 'search' || name === 'developer' || name === 'neighborhood') && value !== '') {
 	            hash += "&" + name + "=" + value;
 	        }
 	    });
-	    console.log(filters)
 	    filterPoints(filters);
 	    router('set','/search/' + hash);
 	}
@@ -507,39 +511,39 @@
 	
 	        // status
 	        var approved = false, proposed = false, underConstruction = false, constructionCompleted = false;
-	        if (filters.approved === "on" && props.status === "approved") {
-	            var approved = true;
+	        if (filters.approved && props.status === "approved") {
+	            approved = true;
 	        }
-	        if (filters.proposed === "on" && props.status === "proposed") {
-	            var proposed = true;
+	        if (filters.proposed && props.status === "proposed") {
+	            proposed = true;
 	        }
-	        if (filters.underConstruction === "on" && props.status === "under-construction") {
-	            var underConstruction = true;
+	        if (filters.underConstruction && props.status === "under-construction") {
+	            underConstruction = true;
 	        }
-	        if (filters.constructionCompleted === "on" && props.status === "construction-completed") {
-	            var constructionCompleted = true;
+	        if (filters.constructionCompleted && props.status === "construction-completed") {
+	            constructionCompleted = true;
 	        }
 	        var status = (approved || proposed || underConstruction || constructionCompleted);
 	
 	        // usage
 	        var commercial = false, residential = false, manufacturing = false, mixed = false, institutional = false;
-	        if (filters.commercial === "on" && props.usage === "commercial") {
-	            var commercial = true;
+	        if (filters.commercial && props.usage === "commercial") {
+	            commercial = true;
 	        }
-	        if (filters.residential === "on" && props.usage === "residential") {
-	            var residential = true;
+	        if (filters.residential && props.usage === "residential") {
+	            residential = true;
 	        }
-	        if (filters.manufacturing === "on" && props.usage === "manufacturing") {
-	            var manufacturing = true;
+	        if (filters.manufacturing && props.usage === "manufacturing") {
+	            manufacturing = true;
 	        }
-	        if (filters.mixed === "on" && props.usage === "mixed-use-commercial-residential") {
-	            var mixed = true;
+	        if (filters.mixed && props.usage === "mixed-use-commercial-residential") {
+	            mixed = true;
 	        }
-	        if (filters.institutional === "on" && props.usage === "institutional") {
-	            var institutional = true;
+	        if (filters.institutional && props.usage === "institutional") {
+	            institutional = true;
 	        }
 	        var usage = (commercial || residential || manufacturing || mixed || institutional);
-	        console.log(filters)
+	
 	        return (search && neighborhood && developer && status && usage);
 	
 	    });
@@ -575,17 +579,17 @@
 	                    'search':'',
 	                    'developer': '',
 	                    'neighborhood': '',
-	                    'commercial': 'on',
-	                    'residential': 'on',
-	                    'manufacturing': 'on',
-	                    'mixed': 'on',
-	                    'institutional': 'on',
-	                    'approved': 'on',
-	                    'proposed': 'on',
-	                    'underConstruction': 'on',
-	                    'constructionCompleted': 'on'
+	                    'commercial': true,
+	                    'residential': true,
+	                    'manufacturing': true,
+	                    'mixed': true,
+	                    'institutional': true,
+	                    'approved': true,
+	                    'proposed': true,
+	                    'underConstruction': true,
+	                    'constructionCompleted': true
 	                };
-	                console.log(filters)
+	
 	                _forEach(hashFilters, function(filter) {
 	                    var filterParts = filter.split("=");
 	                    if ($.inArray(filterParts[0],filterOptions) > -1) {
@@ -15376,13 +15380,12 @@
 	function debounce(func, wait, options) {
 	  var lastArgs,
 	      lastThis,
-	      maxWait,
 	      result,
 	      timerId,
 	      lastCallTime = 0,
 	      lastInvokeTime = 0,
 	      leading = false,
-	      maxing = false,
+	      maxWait = false,
 	      trailing = true;
 	
 	  if (typeof func != 'function') {
@@ -15391,8 +15394,7 @@
 	  wait = toNumber(wait) || 0;
 	  if (isObject(options)) {
 	    leading = !!options.leading;
-	    maxing = 'maxWait' in options;
-	    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+	    maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
 	    trailing = 'trailing' in options ? !!options.trailing : trailing;
 	  }
 	
@@ -15420,7 +15422,7 @@
 	        timeSinceLastInvoke = time - lastInvokeTime,
 	        result = wait - timeSinceLastCall;
 	
-	    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+	    return maxWait === false ? result : nativeMin(result, maxWait - timeSinceLastInvoke);
 	  }
 	
 	  function shouldInvoke(time) {
@@ -15431,7 +15433,7 @@
 	    // trailing edge, the system time has gone backwards and we're treating
 	    // it as the trailing edge, or we've hit the `maxWait` limit.
 	    return (!lastCallTime || (timeSinceLastCall >= wait) ||
-	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+	      (timeSinceLastCall < 0) || (maxWait !== false && timeSinceLastInvoke >= maxWait));
 	  }
 	
 	  function timerExpired() {
@@ -15480,12 +15482,10 @@
 	      if (timerId === undefined) {
 	        return leadingEdge(lastCallTime);
 	      }
-	      if (maxing) {
-	        // Handle invocations in a tight loop.
-	        clearTimeout(timerId);
-	        timerId = setTimeout(timerExpired, wait);
-	        return invokeFunc(lastCallTime);
-	      }
+	      // Handle invocations in a tight loop.
+	      clearTimeout(timerId);
+	      timerId = setTimeout(timerExpired, wait);
+	      return invokeFunc(lastCallTime);
 	    }
 	    if (timerId === undefined) {
 	      timerId = setTimeout(timerExpired, wait);

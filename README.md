@@ -31,6 +31,7 @@ npm run dev
 
 Commit changes
 ```
+git add .
 git status
 git commit -m "[describe work]"
 ```
