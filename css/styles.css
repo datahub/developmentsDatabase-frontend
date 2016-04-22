@@ -171,7 +171,8 @@
       border: 1px solid #e5e5e5;
       border-radius: 0;
       font-size: 14px;
-      line-height: 16px; }
+      line-height: 16px;
+      outline: none; }
     .devtrac--filterbox .filterbox--inputwrapper input[type=checkbox] {
       position: relative;
       top: 3px;
@@ -191,6 +192,36 @@
     .devtrac--filterbox .filterbox--inputwrapper input[type=checkbox]:checked:before {
       content: "\F046";
       margin-right: 0; }
+    .devtrac--filterbox .filterbox--inputwrapper .filterbox--typeahead {
+      position: absolute;
+      left: 0;
+      right: 0px;
+      margin: 0 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 20;
+      font-size: 14px;
+      border-right: 1px solid #e5e5e5;
+      border-left: 1px solid #e5e5e5;
+      background: #fff;
+      box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 10px 0px; }
+      .devtrac--filterbox .filterbox--inputwrapper .filterbox--typeahead .filterbox--results {
+        margin: 0;
+        padding: 0;
+        list-style: none; }
+        .devtrac--filterbox .filterbox--inputwrapper .filterbox--typeahead .filterbox--results li {
+          margin: 0;
+          padding: 4px 7px;
+          list-style: none;
+          border-bottom: 1px solid #ddd;
+          font-size: 13px;
+          line-height: 1.1; }
+          .devtrac--filterbox .filterbox--inputwrapper .filterbox--typeahead .filterbox--results li span {
+            font-weight: bold; }
+        .devtrac--filterbox .filterbox--inputwrapper .filterbox--typeahead .filterbox--results li:hover {
+          cursor: pointer; }
+    .devtrac--filterbox .filterbox--inputwrapper .filterbox--filled {
+      border-bottom: 1px solid #e5e5e5; }
   .devtrac--filterbox .filters--status input[type=checkbox].proposed:before {
     color: #FF7676; }
   .devtrac--filterbox .filters--status input[type=checkbox].approved:before {

@@ -467,7 +467,6 @@
 	        } else {
 	            value = $(this).prop('value');
 	        }
-	        console.log("name: " + name + " - value: " + value);
 	        filters[name] = value;
 	        if ((name === 'search' || name === 'developer' || name === 'neighborhood') && value !== '') {
 	            hash += "&" + name + "=" + value;
@@ -548,14 +547,36 @@
 	
 	    });
 	
-	    //if (filters.search !== "" && filteredPts.length > 0) {
-	        //var list = _map(filteredPts, _property('properties.name'));
-	    //}
+	    if (filters.search.length > 1 && filteredPts.length > 0) {
+	        var list = _map(filteredPts, _property('properties.name'));
+	        typeahead(filters.search,list);
+	    } else {
+	        typeahead();
+	    }
+	
 	    //TODO: refactor to use mapbox layer filters instead of entire map redraw
 	    clearMap();
 	    populateMap({"type": "FeatureCollection", "features": filteredPts});
 	
 	}
+	
+	var typeahead = function(search, list) {
+	    if (list && list.length > 1) {
+	        searchString = new RegExp(search,'i');
+	        var results = _map(list, function(val) {
+	            return '<li>' + val.replace(searchString, '<span>$&</span>') + '</li>';
+	        });
+	        $('.filterbox--typeahead').addClass("filterbox--filled");
+	        $('.filterbox--results').html(results);
+	    } else {
+	        $('.filterbox--typeahead').removeClass("filterbox--filled");
+	        $('.filterbox--results').html('');
+	    }
+	}
+	$(document).on('click','.filterbox--results li',function() {
+	    $('.search--autocomplete').prop('value',$(this).text());
+	    $('#devtrac--form input[type=text]').keyup();
+	});
 	
 	var router = function(action,route) {
 	    if (action === 'set') {

@@ -200,7 +200,6 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         .inputwrapper--twocol:last-of-type {
             float: right;
         }
-
         select {
             width: 100%;
             margin: 0;
@@ -214,7 +213,6 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             font-size: 14px;
             line-height: 16px;
         }
-
         input[type="text"] {
             width: 100%;
             padding: 5px 7px;
@@ -222,8 +220,8 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             border-radius: 0;
             font-size: 14px;
             line-height: 16px;
+            outline: none;
         }
-
         /* custom checkboxes */
         input[type=checkbox] {
             position: relative;
@@ -249,7 +247,46 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
             content: "\f046";
             margin-right: 0;
         }
+        .filterbox--typeahead {
+            position: absolute;
+            left: 0;
+            right: 0px;
+            margin: 0 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 20;
+            font-size: 14px;
+            border-right: 1px solid #e5e5e5;
+            border-left: 1px solid #e5e5e5;
 
+            background: #fff;
+            box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 10px 0px;
+
+            .filterbox--results {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+
+                li {
+                    margin: 0;
+                    padding: 4px 7px;
+                    list-style: none;
+                    border-bottom: 1px solid #ddd;
+                    font-size: 13px;
+                    line-height: 1.1;
+
+                    span {
+                        font-weight: bold;
+                    }
+                }
+                li:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+        .filterbox--filled {
+            border-bottom: 1px solid #e5e5e5;
+        }
     }
 
     .filters--status {
@@ -461,7 +498,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         min-height: 300px;
         position: relative;
         margin: 3% auto 3% auto;
-        
+
         .landscape{
             height: 90%;
         }
