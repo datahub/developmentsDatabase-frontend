@@ -1,5 +1,5 @@
 /* fullscreen */
-.container--fullscreen {
+.container--fullscreen.container {
   position: absolute;
   top: 0;
   right: 0;
@@ -7,7 +7,7 @@
   left: 0;
   max-width: 100%;
   margin: 0; }
-  .container--fullscreen #devtrac--mapbox {
+  .container--fullscreen.container #devtrac--mapbox {
     height: 100%;
     width: 100%; }
 
@@ -254,6 +254,8 @@
         width: auto;
         max-width: 300px;
         float: left; }
+      .devtrac--infobox .infobox--inner .infobox--imagewrap .imagewrap--image:hover {
+        opacity: 0.8; }
     .devtrac--infobox .infobox--inner .infobox--statusbar {
       float: left;
       position: relative;
@@ -332,14 +334,6 @@
   z-index: 5;
   text-align: center;
   background: rgba(0, 0, 0, 0.8); }
-  .devtrac--lighbox img {
-    margin-top: 2%; }
-  .devtrac--lighbox .landscape {
-    width: 100%;
-    height: auto; }
-  .devtrac--lighbox .portrait {
-    width: auto;
-    height: 100%; }
   .devtrac--lighbox .fa-times-circle {
     position: absolute;
     top: 5px;
@@ -348,6 +342,19 @@
     color: #fff;
     font-size: 30px;
     line-height: 30px; }
+  .devtrac--lighbox .lightbox--wrapper {
+    min-height: 300px;
+    position: relative;
+    margin: 3% auto 3% auto; }
+    .devtrac--lighbox .lightbox--wrapper .landscape {
+      height: 90%; }
+    .devtrac--lighbox .lightbox--wrapper .portrait {
+      width: 100%; }
+  .devtrac--lighbox .lightbox--img {
+    vertical-align: middle;
+    margin: 0;
+    height: 90%;
+    width: auto; }
 
 .infobox--hidden {
   transform: translateY(200px); }

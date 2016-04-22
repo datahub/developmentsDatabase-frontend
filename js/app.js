@@ -15,6 +15,7 @@ $(document).ready(function() {
     }
 });
 
+
 window.devtracLayers = [];
 window.devtracPoints = {};
 window.map;
@@ -23,7 +24,7 @@ window.firstRun = true;
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
 window.map = new mapboxgl.Map({
     container: 'devtrac--mapbox',
-    style: 'mapbox://styles/milwaukeejournalsentinel/cilwqkvux004d9mm3ykk9br7n',
+    style: 'mapbox://styles/milwaukeejournalsentinel/cin7x9rdt0063bckvi1buv19i',
     scrollZoom: false,
     boxoom: false,
     dragRotate: false,
@@ -252,6 +253,10 @@ var toggleFullScreen = function() {
 
     if ($('.container').hasClass('container--fullscreen')) {
 
+        $('.toggleFullScreen').removeClass('fa-compress')
+        $('.toggleFullScreen').addClass('fa-expand')
+
+
         if ($(window).width() < 621) {
             $('.devtrac--touch').show();
         } else {
@@ -261,6 +266,10 @@ var toggleFullScreen = function() {
         map.scrollZoom.disable();
 
     } else {
+
+
+        $('.toggleFullScreen').addClass('fa-compress')
+        $('.toggleFullScreen').removeClass('fa-expand')
 
         if ($(window).width() < 621) {
             $('.devtrac--touch').hide();
@@ -335,35 +344,42 @@ var lighbox = function(imageUrl) {
             var imgWidth = this.width;
             var newHeight = 0, scaledHeight = 0;
             var newWidth = 0, scaledWidth = 0;
+            var maxwidth = '';
 
             if (imgHeight > winHeight) {
-                newHeight = Math.round(winHeight * .92);
+                newHeight = Math.round(winHeight * .82);
                 newWidth = Math.round((newHeight * imgWidth) / imgHeight);
             }
+            
+            if (imgWidth > winWidth){
+                newWidth = Math.round(winWidth * .82);
+                newHeight = Math.round((newWidth * imgHeight) / imgWidth);
+            }
+
             if (newWidth > winWidth) {
-                scaledWidth = Math.round(winWidth * .92);
+                scaledWidth = Math.round(winWidth * .82);
                 scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
             } else if (imgWidth > winWidth) {
-                scaledWidth = Math.round(winWidth * .92);
+                scaledWidth = Math.round(winWidth * .82);
                 scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
             } else {
                 scaledWidth = newWidth;
                 scaledHeight = newHeight;
             }
-
+            
             if (imgHeight > imgWidth) {
                 var className = 'portrait';
                 var style = "height: " + scaledHeight + "px;";
             } else {
                 var className = 'landscape';
                 var style = "width: " + scaledWidth + "px;";
-                if (scaledHeight < winHeight) {
-                    var diff = (winHeight - scaledHeight) / 2;
-                    style = style + "margin-top:" + diff + "px;";
-                }
             }
 
-            $('.devtrac--lighbox').append('<img class="lightbox--img ' + className + '" style="' + style + '" src="' + imageUrl + '">');
+            if (scaledWidth!=0){
+                maxwidth = 'style="max-width:'+scaledWidth+'px;"max-height:'+scaledHeight+'px;""'
+            };
+
+            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+maxwidth+' class="lightbox--img" src="'+ imageUrl + '"></div>');
 
             $('.lighbox--close').on('click',function() {
                lighbox();
@@ -372,11 +388,9 @@ var lighbox = function(imageUrl) {
         });
 
     } else {
-
         $('.devtrac--lighbox').hide();
         $('.lightbox--close').unbind('click');
-        $('.lightbox--img').remove();
-
+        $('.lightbox--wrapper').remove();
     }
 }
 
@@ -408,6 +422,7 @@ var getFilters = function() {
             hash += "&" + name + "=" + value;
         }
     });
+    console.log(filters)
     filterPoints(filters);
     router('set','/search/' + hash);
 }
@@ -478,9 +493,7 @@ var filterPoints = function(filters) {
             var institutional = true;
         }
         var usage = (commercial || residential || manufacturing || mixed || institutional);
-
-
-
+        console.log(filters)
         return (search && neighborhood && developer && status && usage);
 
     });
@@ -526,6 +539,7 @@ var router = function(action,route) {
                     'underConstruction': 'on',
                     'constructionCompleted': 'on'
                 };
+                console.log(filters)
                 _forEach(hashFilters, function(filter) {
                     var filterParts = filter.split("=");
                     if ($.inArray(filterParts[0],filterOptions) > -1) {

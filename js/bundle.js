@@ -61,6 +61,7 @@
 	    }
 	});
 	
+	
 	window.devtracLayers = [];
 	window.devtracPoints = {};
 	window.map;
@@ -69,7 +70,7 @@
 	mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
 	window.map = new mapboxgl.Map({
 	    container: 'devtrac--mapbox',
-	    style: 'mapbox://styles/milwaukeejournalsentinel/cilwqkvux004d9mm3ykk9br7n',
+	    style: 'mapbox://styles/milwaukeejournalsentinel/cin7x9rdt0063bckvi1buv19i',
 	    scrollZoom: false,
 	    boxoom: false,
 	    dragRotate: false,
@@ -298,6 +299,10 @@
 	
 	    if ($('.container').hasClass('container--fullscreen')) {
 	
+	        $('.toggleFullScreen').removeClass('fa-compress')
+	        $('.toggleFullScreen').addClass('fa-expand')
+	
+	
 	        if ($(window).width() < 621) {
 	            $('.devtrac--touch').show();
 	        } else {
@@ -307,6 +312,10 @@
 	        map.scrollZoom.disable();
 	
 	    } else {
+	
+	
+	        $('.toggleFullScreen').addClass('fa-compress')
+	        $('.toggleFullScreen').removeClass('fa-expand')
 	
 	        if ($(window).width() < 621) {
 	            $('.devtrac--touch').hide();
@@ -381,35 +390,42 @@
 	            var imgWidth = this.width;
 	            var newHeight = 0, scaledHeight = 0;
 	            var newWidth = 0, scaledWidth = 0;
+	            var maxwidth = '';
 	
 	            if (imgHeight > winHeight) {
-	                newHeight = Math.round(winHeight * .92);
+	                newHeight = Math.round(winHeight * .82);
 	                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
 	            }
+	            
+	            if (imgWidth > winWidth){
+	                newWidth = Math.round(winWidth * .82);
+	                newHeight = Math.round((newWidth * imgHeight) / imgWidth);
+	            }
+	
 	            if (newWidth > winWidth) {
-	                scaledWidth = Math.round(winWidth * .92);
+	                scaledWidth = Math.round(winWidth * .82);
 	                scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
 	            } else if (imgWidth > winWidth) {
-	                scaledWidth = Math.round(winWidth * .92);
+	                scaledWidth = Math.round(winWidth * .82);
 	                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
 	            } else {
 	                scaledWidth = newWidth;
 	                scaledHeight = newHeight;
 	            }
-	
+	            
 	            if (imgHeight > imgWidth) {
 	                var className = 'portrait';
 	                var style = "height: " + scaledHeight + "px;";
 	            } else {
 	                var className = 'landscape';
 	                var style = "width: " + scaledWidth + "px;";
-	                if (scaledHeight < winHeight) {
-	                    var diff = (winHeight - scaledHeight) / 2;
-	                    style = style + "margin-top:" + diff + "px;";
-	                }
 	            }
 	
-	            $('.devtrac--lighbox').append('<img class="lightbox--img ' + className + '" style="' + style + '" src="' + imageUrl + '">');
+	            if (scaledWidth!=0){
+	                maxwidth = 'style="max-width:'+scaledWidth+'px;"max-height:'+scaledHeight+'px;""'
+	            };
+	
+	            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+maxwidth+' class="lightbox--img" src="'+ imageUrl + '"></div>');
 	
 	            $('.lighbox--close').on('click',function() {
 	               lighbox();
@@ -418,11 +434,9 @@
 	        });
 	
 	    } else {
-	
 	        $('.devtrac--lighbox').hide();
 	        $('.lightbox--close').unbind('click');
-	        $('.lightbox--img').remove();
-	
+	        $('.lightbox--wrapper').remove();
 	    }
 	}
 	
@@ -454,6 +468,7 @@
 	            hash += "&" + name + "=" + value;
 	        }
 	    });
+	    console.log(filters)
 	    filterPoints(filters);
 	    router('set','/search/' + hash);
 	}
@@ -524,9 +539,7 @@
 	            var institutional = true;
 	        }
 	        var usage = (commercial || residential || manufacturing || mixed || institutional);
-	
-	
-	
+	        console.log(filters)
 	        return (search && neighborhood && developer && status && usage);
 	
 	    });
@@ -572,6 +585,7 @@
 	                    'underConstruction': 'on',
 	                    'constructionCompleted': 'on'
 	                };
+	                console.log(filters)
 	                _forEach(hashFilters, function(filter) {
 	                    var filterParts = filter.split("=");
 	                    if ($.inArray(filterParts[0],filterOptions) > -1) {
@@ -15362,12 +15376,13 @@
 	function debounce(func, wait, options) {
 	  var lastArgs,
 	      lastThis,
+	      maxWait,
 	      result,
 	      timerId,
 	      lastCallTime = 0,
 	      lastInvokeTime = 0,
 	      leading = false,
-	      maxWait = false,
+	      maxing = false,
 	      trailing = true;
 	
 	  if (typeof func != 'function') {
@@ -15376,7 +15391,8 @@
 	  wait = toNumber(wait) || 0;
 	  if (isObject(options)) {
 	    leading = !!options.leading;
-	    maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
+	    maxing = 'maxWait' in options;
+	    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
 	    trailing = 'trailing' in options ? !!options.trailing : trailing;
 	  }
 	
@@ -15404,7 +15420,7 @@
 	        timeSinceLastInvoke = time - lastInvokeTime,
 	        result = wait - timeSinceLastCall;
 	
-	    return maxWait === false ? result : nativeMin(result, maxWait - timeSinceLastInvoke);
+	    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
 	  }
 	
 	  function shouldInvoke(time) {
@@ -15415,7 +15431,7 @@
 	    // trailing edge, the system time has gone backwards and we're treating
 	    // it as the trailing edge, or we've hit the `maxWait` limit.
 	    return (!lastCallTime || (timeSinceLastCall >= wait) ||
-	      (timeSinceLastCall < 0) || (maxWait !== false && timeSinceLastInvoke >= maxWait));
+	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
 	  }
 	
 	  function timerExpired() {
@@ -15464,10 +15480,12 @@
 	      if (timerId === undefined) {
 	        return leadingEdge(lastCallTime);
 	      }
-	      // Handle invocations in a tight loop.
-	      clearTimeout(timerId);
-	      timerId = setTimeout(timerExpired, wait);
-	      return invokeFunc(lastCallTime);
+	      if (maxing) {
+	        // Handle invocations in a tight loop.
+	        clearTimeout(timerId);
+	        timerId = setTimeout(timerExpired, wait);
+	        return invokeFunc(lastCallTime);
+	      }
 	    }
 	    if (timerId === undefined) {
 	      timerId = setTimeout(timerExpired, wait);
