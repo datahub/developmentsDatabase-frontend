@@ -1,4 +1,633 @@
+<<<<<<< HEAD
 !function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t,n){n(51),window.$=n(52);var r=n(132),o=n(119),i=n(120),a=n(129),s=n(48),u=n(134);window._forEach=n(121),$(document).ready(function(){$(window).width()<621&&$(".devtrac--filterbox").addClass("filterbox--hidden")}),window.devtracLayers=[],window.devtracPoints={},window.map,window.firstRun=!0,mapboxgl.accessToken="pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ",window.map=new mapboxgl.Map({container:"devtrac--mapbox",style:"mapbox://styles/milwaukeejournalsentinel/cin7x9rdt0063bckvi1buv19i",scrollZoom:!1,boxoom:!1,dragRotate:!1,center:[-87.98,43.05],zoom:10,maxBounds:[[-89.593005,42.195264],[-87.223083,43.954109]]}),map.addControl(new mapboxgl.Navigation({position:"top-right"})),map.on("style.load",function(){c()}),map.on("click",function(e){map.featuresAt(e.point,{radius:7,includeGeometry:!0,layer:window.devtracLayers},function(e,t){return e||!t.length?void v():void v(t[0])})}),map.on("mousemove",function(e){map.featuresAt(e.point,{radius:8,layer:window.devtracLayers},function(e,t){map.getCanvas().style.cursor=!e&&t.length?"pointer":""})});var c=function(){if(window.localStorage)if(window.localStorage.getItem("devtrac-cache")){var e=window.location.hash.indexOf("fresh")>-1,t=JSON.parse(window.localStorage.getItem("devtrac-cache")),n=3600,r=Math.floor(Date.now()/1e3);r-t.timestamp<n&&!e?(console.log("using cached data"),window.devtracPoints=t.locations,f(t.meta.developers,t.meta.neighborhoods),p(t.locations)):(console.log("using fresh data"),$.ajax({url:"http://brick1.dhb.io/api/developments/?spaceless=true",jsonpCallback:"preData",dataType:"jsonp",crossDomain:!0,success:function(e){window.devtracPoints=e.locations,f(e.meta.developers,e.meta.neighborhoods),p(e.locations);var t=JSON.stringify({timestamp:Math.floor(Date.now()/1e3),locations:e.locations,meta:e.meta});window.localStorage.setItem("devtrac-cache",t)}}))}else $.ajax({url:"http://brick1.dhb.io/api/developments/?spaceless=true",jsonpCallback:"preData",dataType:"jsonp",crossDomain:!0,success:function(e){window.devtracPoints=e.locations,f(e.meta.developers,e.meta.neighborhoods),p(e.locations);var t=JSON.stringify({timestamp:Math.floor(Date.now()/1e3),locations:e.locations,meta:e.meta});window.localStorage.setItem("devtrac-cache",t)}});else $.ajax({url:"http://brick1.dhb.io/api/developments/?spaceless=true",jsonpCallback:"preData",dataType:"jsonp",crossDomain:!0,success:function(e){f(e.meta.developers,e.meta.neighborhoods),p(e.locations),window.devtracPoints=e.locations}})},l=function(e){e?(map.getLayer("highlight")&&(map.removeLayer("highlight"),map.removeSource("single-point")),map.addSource("single-point",{type:"geojson",data:{type:"FeatureCollection",features:[{geometry:e,type:"Feature",properties:{}}]}}),map.addLayer({id:"highlight",source:"single-point",type:"circle",paint:{"circle-radius":11,"circle-color":"#666666","circle-opacity":.65}},window.devtracLayers[0])):map.getLayer("highlight")&&(map.removeLayer("highlight"),map.removeSource("single-point"))},f=function(e,t){if(e.length>0){var n=r($("#template--developers").html()),o=n({developers:e});$(".holder--developers").append(o)}if(t.length>0){var i=r($("#template--neighborhoods").html()),a=i({neighborhoods:t});$(".holder--neighborhoods").append(a)}},p=function(e){map.addSource("markers",{type:"geojson",data:e});var t={proposed:"#FF7676",approved:"#F6C90E","under-construction":"#466C95","construction-completed":"#5DAE8B"};e.features.forEach(function(e){var n=e.properties.status;map.getLayer(n)||(map.addLayer({id:n,interactive:!0,source:"markers",type:"circle",paint:{"circle-radius":7,"circle-color":t[n],"circle-opacity":1},filter:["==","status",n]}),window.devtracLayers.push(n))}),window.firstRun&&(window.firstRun=!1,j("go"))},d=function(){map.removeSource("markers"),map.getLayer("approved")&&map.removeLayer("approved"),map.getLayer("proposed")&&map.removeLayer("proposed"),map.getLayer("under-construction")&&map.removeLayer("under-construction"),map.getLayer("construction-completed")&&map.removeLayer("construction-completed"),window.devtracLayers=[]},h=function(){$(".container").hasClass("container--fullscreen")?($(".toggleFullScreen").removeClass("fa-compress"),$(".toggleFullScreen").addClass("fa-expand"),$(window).width()<621?$(".devtrac--touch").show():$(document).unbind("keyup.fullscreen"),map.scrollZoom.disable()):($(".toggleFullScreen").addClass("fa-compress"),$(".toggleFullScreen").removeClass("fa-expand"),$(window).width()<621?$(".devtrac--touch").hide():$(document).on("keyup.fullscreen",function(e){27==e.keyCode&&h()}),map.scrollZoom.enable()),$(".container").toggleClass("container--fullscreen"),map.resize()};$(".toggleFullScreen").on("click",function(){h()});var v=function(e){if(e){l(e.geometry);var t=r($("#template--infobox").html()),n=t(e.properties);$(".devtrac--infobox .infobox--inner").html(n),$(".devtrac--infobox").removeClass("infobox--hidden"),$(".infobox--close").on("click",function(){v()}),$(window).width()>620&&$(".lightbox--open").on("click",function(){g($(".imagewrap--image").attr("src"))}),j("set","/development/"+e.properties.id)}else l(),$(".devtrac--infobox").addClass("infobox--hidden"),$(".infobox--close").unbind("click"),$(window).width()>620&&$(".lighbox--open").unbind("click"),j("set","")},g=function(e){if(e){var t=new Image;t.src=e,t.addEventListener("load",function(){$(".devtrac--lighbox").show();var t=$("#devtrac").height(),n=$("#devtrac").width(),r=this.height,o=this.width;if(r>t&&(newHeight=t,newWidth=Math.round(newHeight*o/r)),o>n&&(newWidth=n,newHeight=Math.round(newWidth*r/o)),r>o)var i="portrait",a="";else{var i="landscape";if(newHeight>=t)var a='style="height:85%;width:auto"';else var a='style="width:85%;height:auto"'}$(".devtrac--lighbox").append('<div  class = "lightbox--wrapper '+i+'" "><img '+a+' class="lightbox--img" src="'+e+'"></div>'),$(".lighbox--close").on("click",function(){g()})})}else $(".devtrac--lighbox").hide(),$(".lightbox--close").unbind("click"),$(".lightbox--wrapper").remove()},m=function(){$(".devtrac--filterbox").toggleClass("filterbox--hidden")};$(".toggleFilterBox").on("click",function(){m()});var y=function(e){""!==e.search&&$("#devtrac--form input[name=search]").val(e.search),""!==e.developer&&$('#devtrac--form select[name=developer] option[value="'+e.developer+'"]').prop("selected",!0),""!==e.neighborhood&&$('#devtrac--form select[name=neighborhood] option[value="'+e.neighborhood+'"]').prop("selected",!0)},x=function(){var e={},t="";$("#devtrac--form input, #devtrac--form select").each(function(){name=$(this).prop("name"),"checkbox"===this.type?value=$(this).prop("checked"):value=$(this).prop("value"),e[name]=value,"search"!==name&&"developer"!==name&&"neighborhood"!==name||""===value||(t+="&"+name+"="+value)}),u(function(e){j("set","/search/"+e),console.log("hash: "+e)},700,{leading:!1}),b(e)};$("#devtrac--form input[type=text]").on("keyup",x),$("#devtrac--form input[type=checkbox], #devtrac--form select").on("change",x);var b=function(e){var t=o(devtracPoints.features,function(t){var n=t.properties,r=!0,o=!0,i=!0;if(""!==e.search&&n.name.toLowerCase().trim().indexOf(e.search.toLowerCase().trim())<0&&(r=!1),""!==e.neighborhood&&n.neighborhood.trim()!==e.neighborhood.trim())o=!1;else{var a=$('.holder--neighborhoods option[value="'+e.neighborhood+'"]').data("center");a.length>0?map.flyTo({center:[a[0],a[1]],zoom:a[2]}):map.flyTo({center:[-87.98,43.05],zoom:10})}""!==e.developer&&n.developer.toLowerCase().trim().indexOf(e.developer.toLowerCase().trim())<0&&(i=!1);var s=!1,u=!1,c=!1,l=!1;e.approved&&"approved"===n.status&&(s=!0),e.proposed&&"proposed"===n.status&&(u=!0),e.underConstruction&&"under-construction"===n.status&&(c=!0),e.constructionCompleted&&"construction-completed"===n.status&&(l=!0);var f=s||u||c||l,p=!1,d=!1,h=!1,v=!1,g=!1;e.commercial&&"commercial"===n.usage&&(p=!0),e.residential&&"residential"===n.usage&&(d=!0),e.manufacturing&&"manufacturing"===n.usage&&(h=!0),e.mixed&&"mixed-use-commercial-residential"===n.usage&&(v=!0),e.institutional&&"institutional"===n.usage&&(g=!0);var m=p||d||h||v||g;return r&&o&&i&&f&&m});if(e.search.length>0&&t.length>0){var n=a(t,s("properties.name"));w(e.search,n),v()}else w();T(t.length,devtracPoints.features.length),d(),p({type:"FeatureCollection",features:t})},w=function(e,t){if(t&&t.length>0){searchString=new RegExp(e,"i");var n=a(t,function(e){return"<li>"+e.replace(searchString,"<span>$&</span>")+"</li>"});$(".filterbox--typeahead").addClass("filterbox--filled"),$(".filterbox--results").html(n)}else $(".filterbox--typeahead").removeClass("filterbox--filled"),$(".filterbox--results").html("")};$(document).on("click",".filterbox--results li",function(){$(".search--autocomplete").prop("value",$(this).text()),$("#devtrac--form input[type=text]").keyup()});var T=function(e,t){$(".filterbox--count").html("showing "+e+" of "+t)},j=function(e,t){if("set"===e)window.location.hash=t.trim();else if("go"===e){var n=window.location.hash.substr(1);if(T(window.devtracPoints.features.length,window.devtracPoints.features.length),n){var r=n.split("/").filter(Boolean);if("development"===r[0]&&r[1])development=i(window.devtracPoints.features,function(e){return e.properties.id==r[1]}),development&&setTimeout(function(){map.flyTo({center:development.geometry.coordinates,zoom:16}),v(development)},500);else if("search"===r[0]&&r[1]){var o=r[1].split("&").filter(Boolean),a=["search","developer","neighborhood"],s={search:"",developer:"",neighborhood:"",commercial:!0,residential:!0,manufacturing:!0,mixed:!0,institutional:!0,approved:!0,proposed:!0,underConstruction:!0,constructionCompleted:!0};_forEach(o,function(e){var t=e.split("=");$.inArray(t[0],a)>-1&&(s[t[0]]=t[1])}),b(s),y(s)}}}}},function(e,t){var n=Array.isArray;e.exports=n},function(e,t,n){(function(e,r){var o=n(82),i={"function":!0,object:!0},a=i[typeof t]&&t&&!t.nodeType?t:void 0,s=i[typeof e]&&e&&!e.nodeType?e:void 0,u=o(a&&s&&"object"==typeof r&&r),c=o(i[typeof self]&&self),l=o(i[typeof window]&&window),f=o(i[typeof this]&&this),p=u||l!==(f&&f.window)&&l||c||f||Function("return this")();e.exports=p}).call(t,n(137)(e),function(){return this}())},function(e,t){function n(e){var t=typeof e;return!!e&&("object"==t||"function"==t)}e.exports=n},function(e,t,n){var r=n(5),o=n(2),i=r(o,"Map");e.exports=i},function(e,t,n){function r(e,t){var n=e[t];return o(n)?n:void 0}var o=n(126);e.exports=r},function(e,t){function n(e){return!!e&&"object"==typeof e}e.exports=n},function(e,t,n){function r(e){return null!=e&&a(o(e))&&!i(e)}var o=n(91),i=n(19),a=n(16);e.exports=r},function(e,t,n){function r(e,t){for(var n=e.length;n--;)if(o(e[n][0],t))return n;return-1}var o=n(15);e.exports=r},function(e,t,n){var r=n(69),o=n(85),i=o(r);e.exports=i},function(e,t,n){function r(e){return"function"==typeof e?e:null==e?a:"object"==typeof e?s(e)?i(e[0],e[1]):o(e):u(e)}var o=n(76),i=n(77),a=n(124),s=n(1),u=n(48);e.exports=r},function(e,t){function n(e,t){return e="number"==typeof e||o.test(e)?+e:-1,t=null==t?r:t,e>-1&&e%1==0&&t>e}var r=9007199254740991,o=/^(?:0|[1-9]\d*)$/;e.exports=n},function(e,t,n){function r(e,t){var n=typeof e;return"number"==n||"symbol"==n?!0:!o(e)&&(i(e)||s.test(e)||!a.test(e)||null!=t&&e in Object(t))}var o=n(1),i=n(20),a=/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,s=/^\w*$/;e.exports=r},function(e,t){function n(e){var t=typeof e;return"number"==t||"boolean"==t||"string"==t&&"__proto__"!=e||null==e}e.exports=n},function(e,t,n){var r=n(5),o=r(Object,"create");e.exports=o},function(e,t){function n(e,t){return e===t||e!==e&&t!==t}e.exports=n},function(e,t){function n(e){return"number"==typeof e&&e>-1&&e%1==0&&r>=e}var r=9007199254740991;e.exports=n},function(e,t,n){function r(e){var t=c(e);if(!t&&!s(e))return i(e);var n=a(e),r=!!n,l=n||[],f=l.length;for(var p in e)!o(e,p)||r&&("length"==p||u(p,f))||t&&"constructor"==p||l.push(p);return l}var o=n(31),i=n(73),a=n(37),s=n(7),u=n(11),c=n(40);e.exports=r},function(e,t){function n(e,t){for(var n=-1,r=e.length,o=Array(r);++n<r;)o[n]=t(e[n],n,e);return o}e.exports=n},function(e,t,n){function r(e){var t=o(e)?u.call(e):"";return t==i||t==a}var o=n(3),i="[object Function]",a="[object GeneratorFunction]",s=Object.prototype,u=s.toString;e.exports=r},function(e,t,n){function r(e){return"symbol"==typeof e||o(e)&&s.call(e)==i}var o=n(6),i="[object Symbol]",a=Object.prototype,s=a.toString;e.exports=r},function(e,t,n){function r(e){if("string"==typeof e)return e;if(null==e)return"";if(i(e))return u?u.call(e):"";var t=e+"";return"0"==t&&1/e==-a?"-0":t}var o=n(24),i=n(20),a=1/0,s=o?o.prototype:void 0,u=s?s.toString:void 0;e.exports=r},function(e,t,n){function r(e){var t=-1,n=e?e.length:0;for(this.clear();++t<n;){var r=e[t];this.set(r[0],r[1])}}var o=n(100),i=n(101),a=n(102),s=n(103),u=n(104);r.prototype.clear=o,r.prototype["delete"]=i,r.prototype.get=a,r.prototype.has=s,r.prototype.set=u,e.exports=r},function(e,t,n){function r(e){var t=-1,n=e?e.length:0;for(this.clear();++t<n;){var r=e[t];this.set(r[0],r[1])}}var o=n(109),i=n(110),a=n(111),s=n(112),u=n(113);r.prototype.clear=o,r.prototype["delete"]=i,r.prototype.get=a,r.prototype.has=s,r.prototype.set=u,e.exports=r},function(e,t,n){var r=n(2),o=r.Symbol;e.exports=o},function(e,t){function n(e,t,n){var r=n.length;switch(r){case 0:return e.call(t);case 1:return e.call(t,n[0]);case 2:return e.call(t,n[0],n[1]);case 3:return e.call(t,n[0],n[1],n[2])}return e.apply(t,n)}e.exports=n},function(e,t,n){function r(e,t){var n=o(e,t);if(0>n)return!1;var r=e.length-1;return n==r?e.pop():a.call(e,n,1),!0}var o=n(8),i=Array.prototype,a=i.splice;e.exports=r},function(e,t,n){function r(e,t){var n=o(e,t);return 0>n?void 0:e[n][1]}var o=n(8);e.exports=r},function(e,t,n){function r(e,t){return o(e,t)>-1}var o=n(8);e.exports=r},function(e,t,n){function r(e,t,n){var r=o(e,t);0>r?e.push([t,n]):e[r][1]=n}var o=n(8);e.exports=r},function(e,t,n){function r(e,t){t=i(t,e)?[t]:o(t);for(var n=0,r=t.length;null!=e&&r>n;)e=e[t[n++]];return n&&n==r?e:void 0}var o=n(34),i=n(12);e.exports=r},function(e,t,n){function r(e,t){return a.call(e,t)||"object"==typeof e&&t in e&&null===o(e)}var o=n(93),i=Object.prototype,a=i.hasOwnProperty;e.exports=r},function(e,t,n){function r(e,t,n,s,u){return e===t?!0:null==e||null==t||!i(e)&&!a(t)?e!==e&&t!==t:o(e,t,r,n,s,u)}var o=n(71),i=n(3),a=n(6);e.exports=r},function(e,t){function n(e){return function(t){return null==t?void 0:t[e]}}e.exports=n},function(e,t,n){function r(e){return o(e)?e:i(e)}var o=n(1),i=n(114);e.exports=r},function(e,t,n){function r(e,t,n,r,s,u){var c=-1,l=s&a,f=s&i,p=e.length,d=t.length;if(p!=d&&!(l&&d>p))return!1;var h=u.get(e);if(h)return h==t;var v=!0;for(u.set(e,t);++c<p;){var g=e[c],m=t[c];if(r)var y=l?r(m,g,c,t,e,u):r(g,m,c,e,t,u);if(void 0!==y){if(y)continue;v=!1;break}if(f){if(!o(t,function(e){return g===e||n(g,e,r,s,u)})){v=!1;break}}else if(g!==m&&!n(g,m,r,s,u)){v=!1;break}}return u["delete"](e),v}var o=n(62),i=1,a=2;e.exports=r},function(e,t,n){function r(e,t){return o?void 0!==e[t]:a.call(e,t)}var o=n(14),i=Object.prototype,a=i.hasOwnProperty;e.exports=r},function(e,t,n){function r(e){var t=e?e.length:void 0;return s(t)&&(a(e)||u(e)||i(e))?o(t,String):null}var o=n(79),i=n(45),a=n(1),s=n(16),u=n(47);e.exports=r},function(e,t){function n(e){var t=!1;if(null!=e&&"function"!=typeof e.toString)try{t=!!(e+"")}catch(n){}return t}e.exports=n},function(e,t,n){function r(e,t,n){if(!s(n))return!1;var r=typeof t;return("number"==r?i(n)&&a(t,n.length):"string"==r&&t in n)?o(n[t],e):!1}var o=n(15),i=n(7),a=n(11),s=n(3);e.exports=r},function(e,t){function n(e){var t=e&&e.constructor,n="function"==typeof t&&t.prototype||r;return e===n}var r=Object.prototype;e.exports=n},function(e,t,n){function r(e){return e===e&&!o(e)}var o=n(3);e.exports=r},function(e,t){function n(e,t){return function(n){return null==n?!1:n[e]===t&&(void 0!==t||e in Object(n))}}e.exports=n},function(e,t){var n=/<%=([\s\S]+?)%>/g;e.exports=n},function(e,t){function n(e){if(null!=e){try{return r.call(e)}catch(t){}try{return e+""}catch(t){}}return""}var r=Function.prototype.toString;e.exports=n},function(e,t,n){function r(e){return o(e)&&s.call(e,"callee")&&(!c.call(e,"callee")||u.call(e)==i)}var o=n(125),i="[object Arguments]",a=Object.prototype,s=a.hasOwnProperty,u=a.toString,c=a.propertyIsEnumerable;e.exports=r},function(e,t,n){function r(e){return o(e)?s.call(e)==i||"string"==typeof e.message&&"string"==typeof e.name:!1}var o=n(6),i="[object Error]",a=Object.prototype,s=a.toString;e.exports=r},function(e,t,n){function r(e){return"string"==typeof e||!o(e)&&i(e)&&u.call(e)==a}var o=n(1),i=n(6),a="[object String]",s=Object.prototype,u=s.toString;e.exports=r},function(e,t,n){function r(e){return a(e)?o(e):i(e)}var o=n(33),i=n(78),a=n(12);e.exports=r},function(e,t,n){function r(e,t){if("function"!=typeof e)throw new TypeError(a);return t=s(void 0===t?e.length-1:i(t),0),function(){for(var n=arguments,r=-1,i=s(n.length-t,0),a=Array(i);++r<i;)a[r]=n[t+r];switch(t){case 0:return e.call(this,a);case 1:return e.call(this,n[0],a);case 2:return e.call(this,n[0],n[1],a)}var u=Array(t+1);for(r=-1;++r<t;)u[r]=n[r];return u[t]=a,o(e,this,u)}}var o=n(25),i=n(135),a="Expected a function",s=Math.max;e.exports=r},function(e,t,n){function r(e){if("number"==typeof e)return e;if(a(e))return s;if(i(e)){var t=o(e.valueOf)?e.valueOf():e;e=i(t)?t+"":t}if("string"!=typeof e)return 0===e?e:+e;e=e.replace(u,"");var n=l.test(e);return n||f.test(e)?p(e.slice(2),n?2:8):c.test(e)?s:+e}var o=n(19),i=n(3),a=n(20),s=NaN,u=/^\s+|\s+$/g,c=/^[-+]0x[0-9a-f]+$/i,l=/^0b[01]+$/i,f=/^0o[0-7]+$/i,p=parseInt;e.exports=r},function(e,t){},function(e,t,n){var r,o;/*!
+=======
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(1);
+	
+	window.$ = __webpack_require__(3);
+	var _tpl = __webpack_require__(4);
+	var _filter = __webpack_require__(56);
+	var _find = __webpack_require__(129);
+	var _map = __webpack_require__(132);
+	var _property = __webpack_require__(127);
+	var _throttle = __webpack_require__(134);
+	window._forEach = __webpack_require__(137);
+	
+	$(document).ready(function() {
+	    if ($(window).width() < 621) {
+	        $('.devtrac--filterbox').addClass('filterbox--hidden');
+	    }
+	});
+	
+	
+	window.devtracLayers = [];
+	window.devtracPoints = {};
+	window.map;
+	window.firstRun = true;
+	
+	mapboxgl.accessToken = 'pk.eyJ1IjoibWlsd2F1a2Vlam91cm5hbHNlbnRpbmVsIiwiYSI6IkhmS0lZZncifQ.WemgYJ9P3TcgtGIcMoP2PQ';
+	window.map = new mapboxgl.Map({
+	    container: 'devtrac--mapbox',
+	    style: 'mapbox://styles/milwaukeejournalsentinel/cin7x9rdt0063bckvi1buv19i',
+	    scrollZoom: false,
+	    boxoom: false,
+	    dragRotate: false,
+	    center: [-87.9800,43.0500],
+	    zoom: 10,
+	    maxBounds: [[-89.593005,42.195264],[-87.223083,43.954109]],
+	});
+	map.addControl(new mapboxgl.Navigation({position: 'top-right'}));
+	
+	map.on('style.load', function () {
+	
+	    getCacheData();
+	
+	});
+	
+	map.on('click', function (e) {
+	
+	    map.featuresAt(e.point, {
+	        radius: 7,
+	        includeGeometry: true,
+	        layer: window.devtracLayers
+	    },
+	    function (err, features) {
+	
+	        if (err || !features.length) {
+	            toggleInfoBox();
+	            return;
+	        }
+	        toggleInfoBox(features[0]);
+	
+	    });
+	
+	});
+	
+	map.on('mousemove', function (e) {
+	    map.featuresAt(e.point, {
+	        radius: 8,
+	        layer: window.devtracLayers
+	    },
+	    function (err, features) {
+	        map.getCanvas().style.cursor = (!err && features.length) ? 'pointer' : '';
+	    });
+	});
+	
+	//TODO: clean up this functon
+	var getCacheData = function() {
+	    if (window.localStorage) {
+	
+	        if (window.localStorage.getItem('devtrac-cache')) {
+	
+	            var cacheBust = (window.location.hash.indexOf('fresh') > -1) ? true : false;
+	
+	            var data = JSON.parse(window.localStorage.getItem('devtrac-cache'));
+	            var cacheLength = (3600 * 1); // 1 hour in seconds
+	            var now = Math.floor(Date.now() / 1000);
+	
+	            if ((now - data.timestamp) < cacheLength && !cacheBust) {
+	
+	                console.log('using cached data');
+	
+	                window.devtracPoints = data.locations;
+	                populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                populateMap(data.locations);
+	
+	            } else {
+	
+	                console.log('using fresh data');
+	
+	                $.ajax({
+	                    url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+	                    jsonpCallback: 'preData',
+	                    dataType: 'jsonp',
+	                    crossDomain: true,
+	                    success: function(data) {
+	                        window.devtracPoints = data.locations;
+	                        populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                        populateMap(data.locations);
+	                        var storageString = JSON.stringify({
+	                            timestamp : Math.floor(Date.now() / 1000),
+	                            locations : data.locations,
+	                            meta : data.meta,
+	                        });
+	                        window.localStorage.setItem('devtrac-cache',storageString);
+	                    }
+	                });
+	
+	            }
+	
+	        } else {
+	
+	            $.ajax({
+	                url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+	                jsonpCallback: 'preData',
+	                dataType: 'jsonp',
+	                crossDomain: true,
+	                success: function(data) {
+	                    window.devtracPoints = data.locations;
+	                    populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                    populateMap(data.locations);
+	                    var storageString = JSON.stringify({
+	                        timestamp : Math.floor(Date.now() / 1000),
+	                        locations : data.locations,
+	                        meta : data.meta,
+	                    });
+	                    window.localStorage.setItem('devtrac-cache',storageString);
+	                }
+	            });
+	
+	        }
+	
+	    } else {
+	        $.ajax({
+	            url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+	            jsonpCallback: 'preData',
+	            dataType: 'jsonp',
+	            crossDomain: true,
+	            success: function(data) {
+	                populateFilters(data.meta.developers, data.meta.neighborhoods);
+	                populateMap(data.locations);
+	                window.devtracPoints = data.locations;
+	            }
+	        });
+	    }
+	}
+	
+	var highlightPt = function(geo) {
+	    if (geo) {
+	
+	        if (map.getLayer('highlight')) {
+	            map.removeLayer('highlight');
+	            map.removeSource('single-point');
+	        }
+	
+	        map.addSource('single-point', {
+	            "type": "geojson",
+	            "data": {
+	                "type": "FeatureCollection",
+	                "features": [{
+	                    "geometry": geo,
+	                    "type": "Feature",
+	                    "properties": {}
+	                }]
+	            }
+	        });
+	
+	        map.addLayer({
+	            "id": "highlight",
+	            "source": "single-point",
+	            "type": "circle",
+	            "paint": {
+	                "circle-radius": 11,
+	                "circle-color": "#666666",
+	                "circle-opacity": .65
+	            }
+	        }, window.devtracLayers[0]);
+	
+	    } else if (map.getLayer('highlight')) {
+	        map.removeLayer('highlight');
+	        map.removeSource('single-point');
+	    }
+	}
+	
+	var populateFilters = function(devs, hoods) {
+	    if (devs.length > 0) {
+	        var developersTpl = _tpl($('#template--developers').html());
+	        var dhtml = developersTpl({'developers': devs});
+	        $('.holder--developers').append(dhtml);
+	    }
+	    if (hoods.length > 0) {
+	        var neighborhoodsTpl = _tpl($('#template--neighborhoods').html());
+	        var nhtml = neighborhoodsTpl({'neighborhoods': hoods});
+	        $('.holder--neighborhoods').append(nhtml);
+	    }
+	}
+	
+	var populateMap = function(markers) {
+	
+	    map.addSource("markers", {
+	        "type": "geojson",
+	        "data": markers
+	    });
+	
+	    var layerColors = {
+	        "proposed": "#FF7676",
+	        "approved": "#F6C90E",
+	        "under-construction": "#466C95",
+	        "construction-completed": "#5DAE8B",
+	    }
+	
+	    markers.features.forEach(function(feature) {
+	        var status = feature.properties['status'];
+	
+	        if (!map.getLayer(status)) {
+	            map.addLayer({
+	                "id": status,
+	                "interactive": true,
+	                "source": "markers",
+	                "type": "circle",
+	                "paint": {
+	                    "circle-radius": 7,
+	                    "circle-color": layerColors[status],
+	                    "circle-opacity": 1
+	                },
+	                "filter": ["==", "status", status]
+	            });
+	            window.devtracLayers.push(status);
+	        }
+	    });
+	
+	    if (window.firstRun) {
+	        window.firstRun = false;
+	        router('go');
+	    }
+	}
+	
+	var clearMap = function() {
+	    map.removeSource("markers");
+	    if (map.getLayer('approved')) { map.removeLayer('approved'); }
+	    if (map.getLayer('proposed')) { map.removeLayer('proposed'); }
+	    if (map.getLayer('under-construction')) { map.removeLayer('under-construction'); }
+	    if (map.getLayer('construction-completed')) { map.removeLayer('construction-completed'); }
+	    window.devtracLayers = [];
+	}
+	
+	var toggleFullScreen = function() {
+	
+	    if ($('.container').hasClass('container--fullscreen')) {
+	
+	        $('.toggleFullScreen').removeClass('fa-compress')
+	        $('.toggleFullScreen').addClass('fa-expand')
+	
+	
+	        if ($(window).width() < 621) {
+	            $('.devtrac--touch').show();
+	        } else {
+	            $(document).unbind('keyup.fullscreen');
+	        }
+	
+	        map.scrollZoom.disable();
+	
+	    } else {
+	
+	
+	        $('.toggleFullScreen').addClass('fa-compress')
+	        $('.toggleFullScreen').removeClass('fa-expand')
+	
+	        if ($(window).width() < 621) {
+	            $('.devtrac--touch').hide();
+	        } else {
+	            $(document).on('keyup.fullscreen',function(evt) {
+	                if (evt.keyCode == 27) {
+	                   toggleFullScreen();
+	                }
+	            });
+	        }
+	
+	        map.scrollZoom.enable();
+	
+	    }
+	    $('.container').toggleClass('container--fullscreen');
+	    map.resize();
+	
+	}
+	$('.toggleFullScreen').on('click',function(){toggleFullScreen()});
+	
+	var toggleInfoBox = function(data) {
+	    if (data) {
+	
+	        highlightPt(data.geometry);
+	
+	        var infoboxTpl = _tpl($('#template--infobox').html());
+	        var html = infoboxTpl(data.properties);
+	
+	        $('.devtrac--infobox .infobox--inner').html(html);
+	        $('.devtrac--infobox').removeClass('infobox--hidden');
+	
+	        $('.infobox--close').on('click',function() {
+	           toggleInfoBox();
+	        });
+	
+	        if ($(window).width() > 620) {
+	            $('.lightbox--open').on('click',function() {
+	               lighbox($('.imagewrap--image').attr('src'));
+	            });
+	        }
+	
+	        router('set','/development/' + data.properties.id);
+	
+	    } else {
+	
+	        highlightPt();
+	
+	        $('.devtrac--infobox').addClass('infobox--hidden');
+	
+	        $('.infobox--close').unbind('click');
+	        if ($(window).width() > 620) {
+	            $('.lighbox--open').unbind('click');
+	        }
+	
+	        router('set','');
+	
+	    }
+	}
+	
+	var lighbox = function(imageUrl) {
+	
+	    if (imageUrl) {
+	        var theImage = new Image();
+	        theImage.src = imageUrl;
+	        theImage.addEventListener('load', function() {
+	
+	            $('.devtrac--lighbox').show();
+	
+	            var winHeight = $('#devtrac').height();
+	            var winWidth = $('#devtrac').width();
+	            var imgHeight = this.height;
+	            var imgWidth = this.width;
+	            var newHeight = 0, newWidth = 0;
+	
+	            if (imgHeight > winHeight) {
+	                newHeight = winHeight;
+	                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
+	            }
+	
+	            if (imgWidth > winWidth) {
+	                newWidth = winWidth;
+	                newHeight = Math.round((newWidth * imgHeight) / imgWidth);
+	            }
+	
+	            if (imgHeight > imgWidth) {
+	                var className = 'portrait';
+	                var style = '';
+	            } else {
+	                var className = 'landscape';
+	                if (newHeight >= winHeight){
+	                    var style = 'style="height:85%;width:auto"';
+	                } else {
+	                    var style = 'style="width:85%;height:auto"';
+	                }
+	            }
+	
+	            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+style+' class="lightbox--img" src="'+ imageUrl + '"></div>');
+	
+	            $('.lighbox--close').on('click',function() {
+	               lighbox();
+	            });
+	
+	        });
+	
+	    } else {
+	        $('.devtrac--lighbox').hide();
+	        $('.lightbox--close').unbind('click');
+	        $('.lightbox--wrapper').remove();
+	    }
+	}
+	
+	var toggleFilterBox = function() {
+	    $('.devtrac--filterbox').toggleClass('filterbox--hidden');
+	}
+	$('.toggleFilterBox').on('click',function(){toggleFilterBox()});
+	
+	var setFilters = function(filterOptions) {
+	    if (filterOptions.search !== "") {
+	        $('#devtrac--form input[name=search]').val(filterOptions.search);
+	    }
+	    if (filterOptions.developer !== "") {
+	        $('#devtrac--form select[name=developer] option[value="'+filterOptions.developer+'"]').prop("selected", true);
+	    }
+	    if (filterOptions.neighborhood !== "") {
+	        $('#devtrac--form select[name=neighborhood] option[value="'+filterOptions.neighborhood+'"]').prop("selected", true);
+	    }
+	}
+	
+	var getFilters = function() {
+	    filters = {};
+	    hash = "";
+	    $('#devtrac--form input, #devtrac--form select').each(function() {
+	        name = $(this).prop('name');
+	        if (this.type === "checkbox") {
+	            value = $(this).prop('checked');
+	        } else {
+	            value = $(this).prop('value');
+	        }
+	        filters[name] = value;
+	        if ((name === 'search' || name === 'developer' || name === 'neighborhood') && value !== '') {
+	            hash += "&" + name + "=" + value;
+	        }
+	    });
+	    filterPoints(filters);
+	    router('set','/search/' + hash);
+	}
+	$('#devtrac--form input[type=text]').on('keyup',_throttle(getFilters, 500, {'leading': false}));
+	$('#devtrac--form input[type=checkbox], #devtrac--form select').on('change',getFilters);
+	
+	var filterPoints = function(filters) {
+	    filteredPts = _filter(devtracPoints.features, function(point) {
+	        var props = point.properties;
+	
+	        var search = true, neighborhood = true, developer = true;
+	
+	        // search
+	        if (filters.search !== "" && props.name.toLowerCase().trim().indexOf(filters.search.toLowerCase().trim()) < 0 ) {
+	            var search = false;
+	        }
+	
+	        // neightborhood
+	        if (filters.neighborhood !== "" && props.neighborhood.trim() !== filters.neighborhood.trim()) {
+	            var neighborhood = false;
+	        } else {
+	
+	            var center = $('.holder--neighborhoods option[value="'+filters.neighborhood+'"]').data('center');
+	            if (center.length > 0) {
+	                map.flyTo({center: [center[0],center[1]], zoom:center[2]});
+	            } else {
+	                map.flyTo({center: [-87.9800,43.0500], zoom:10});
+	            }
+	
+	        }
+	
+	        // developer
+	        if (filters.developer !== "" && props.developer.toLowerCase().trim().indexOf(filters.developer.toLowerCase().trim()) < 0) {
+	            var developer = false;
+	        }
+	
+	        // status
+	        var approved = false, proposed = false, underConstruction = false, constructionCompleted = false;
+	        if (filters.approved && props.status === "approved") {
+	            approved = true;
+	        }
+	        if (filters.proposed && props.status === "proposed") {
+	            proposed = true;
+	        }
+	        if (filters.underConstruction && props.status === "under-construction") {
+	            underConstruction = true;
+	        }
+	        if (filters.constructionCompleted && props.status === "construction-completed") {
+	            constructionCompleted = true;
+	        }
+	        var status = (approved || proposed || underConstruction || constructionCompleted);
+	
+	        // usage
+	        var commercial = false, residential = false, manufacturing = false, mixed = false, institutional = false;
+	        if (filters.commercial && props.usage === "commercial") {
+	            commercial = true;
+	        }
+	        if (filters.residential && props.usage === "residential") {
+	            residential = true;
+	        }
+	        if (filters.manufacturing && props.usage === "manufacturing") {
+	            manufacturing = true;
+	        }
+	        if (filters.mixed && props.usage === "mixed-use-commercial-residential") {
+	            mixed = true;
+	        }
+	        if (filters.institutional && props.usage === "institutional") {
+	            institutional = true;
+	        }
+	        var usage = (commercial || residential || manufacturing || mixed || institutional);
+	
+	        return (search && neighborhood && developer && status && usage);
+	
+	    });
+	
+	    if (filters.search.length > 1 && filteredPts.length > 0) {
+	        var list = _map(filteredPts, _property('properties.name'));
+	        typeahead(filters.search,list);
+	    } else {
+	        typeahead();
+	    }
+	
+	    //TODO: refactor to use mapbox layer filters instead of entire map redraw
+	    clearMap();
+	    populateMap({"type": "FeatureCollection", "features": filteredPts});
+	
+	}
+	
+	var typeahead = function(search, list) {
+	    if (list && list.length > 1) {
+	        searchString = new RegExp(search,'i');
+	        var results = _map(list, function(val) {
+	            return '<li>' + val.replace(searchString, '<span>$&</span>') + '</li>';
+	        });
+	        $('.filterbox--typeahead').addClass("filterbox--filled");
+	        $('.filterbox--results').html(results);
+	    } else {
+	        $('.filterbox--typeahead').removeClass("filterbox--filled");
+	        $('.filterbox--results').html('');
+	    }
+	}
+	$(document).on('click','.filterbox--results li',function() {
+	    $('.search--autocomplete').prop('value',$(this).text());
+	    $('#devtrac--form input[type=text]').keyup();
+	});
+	
+	var router = function(action,route) {
+	    if (action === 'set') {
+	        window.location.hash = route.trim();
+	    } else if (action === 'go') {
+	        var hash = window.location.hash.substr(1);
+	        if (hash) {
+	            var paths = hash.split("/").filter(Boolean);
+	            if (paths[0] === 'development' && paths[1]) {
+	                development = _find(window.devtracPoints.features, function(o){ return o.properties.id == paths[1] ? true : false;});
+	                if (development) {
+	                    setTimeout(function() {
+	                        map.flyTo({center: development.geometry.coordinates, zoom:16});
+	                        toggleInfoBox(development);
+	                    }, 500);
+	                }
+	            } else if (paths[0] === 'search' && paths[1]) {
+	                var hashFilters = paths[1].split("&").filter(Boolean);
+	                var filterOptions = ['search','developer','neighborhood'];
+	                var filters = {
+	                    'search':'',
+	                    'developer': '',
+	                    'neighborhood': '',
+	                    'commercial': true,
+	                    'residential': true,
+	                    'manufacturing': true,
+	                    'mixed': true,
+	                    'institutional': true,
+	                    'approved': true,
+	                    'proposed': true,
+	                    'underConstruction': true,
+	                    'constructionCompleted': true
+	                };
+	
+	                _forEach(hashFilters, function(filter) {
+	                    var filterParts = filter.split("=");
+	                    if ($.inArray(filterParts[0],filterOptions) > -1) {
+	                        filters[filterParts[0]] = filterParts[1];
+	                    }
+	                });
+	                filterPoints(filters);
+	                setFilters(filters);
+	            }
+	        }
+	    }
+	}
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 2 */,
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+>>>>>>> 636401fb75762d2b7cab755349c0f725d056d43f
 	 * jQuery JavaScript Library v2.2.3
 	 * http://jquery.com/
 	 *

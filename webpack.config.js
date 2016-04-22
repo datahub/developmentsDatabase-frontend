@@ -4,7 +4,7 @@ module.exports = {
     output: {
         filename: "./js/bundle.js"
     },
-    //devtool: "source-map",
+    devtool: "source-map",
     module: {
         loaders: [{
                 test: /\.scss$/,

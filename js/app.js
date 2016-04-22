@@ -343,6 +343,7 @@ var lighbox = function(imageUrl) {
             var winWidth = $('#devtrac').width();
             var imgHeight = this.height;
             var imgWidth = this.width;
+            var newHeight = 0, newWidth = 0;
 
             if (imgHeight > winHeight) {
                 newHeight = winHeight;
