@@ -342,44 +342,30 @@ var lighbox = function(imageUrl) {
             var winWidth = $('#devtrac').width();
             var imgHeight = this.height;
             var imgWidth = this.width;
-            var newHeight = 0, scaledHeight = 0;
-            var newWidth = 0, scaledWidth = 0;
-            var maxwidth = '';
 
             if (imgHeight > winHeight) {
-                newHeight = Math.round(winHeight * .82);
+                newHeight = winHeight;
                 newWidth = Math.round((newHeight * imgWidth) / imgHeight);
             }
 
             if (imgWidth > winWidth) {
-                newWidth = Math.round(winWidth * .82);
+                newWidth = winWidth;
                 newHeight = Math.round((newWidth * imgHeight) / imgWidth);
-            }
-
-            if (newWidth > winWidth) {
-                scaledWidth = Math.round(winWidth * .82);
-                scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
-            } else if (imgWidth > winWidth) {
-                scaledWidth = Math.round(winWidth * .82);
-                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
-            } else {
-                scaledWidth = newWidth;
-                scaledHeight = newHeight;
             }
 
             if (imgHeight > imgWidth) {
                 var className = 'portrait';
-                var style = "height: " + scaledHeight + "px;";
+                var style = '';
             } else {
                 var className = 'landscape';
-                var style = "width: " + scaledWidth + "px;";
+                if (newHeight >= winHeight){
+                    var style = 'style="height:85%;width:auto"';
+                } else {
+                    var style = 'style="width:85%;height:auto"';
+                }
             }
 
-            if (scaledWidth !== 0) {
-                maxwidth = 'style="max-width:'+scaledWidth+'px;"max-height:'+scaledHeight+'px;""'
-            };
-
-            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+maxwidth+' class="lightbox--img" src="'+ imageUrl + '"></div>');
+            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+style+' class="lightbox--img" src="'+ imageUrl + '"></div>');
 
             $('.lighbox--close').on('click',function() {
                lighbox();

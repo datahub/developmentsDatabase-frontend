@@ -380,12 +380,16 @@
     .devtrac--lighbox .lightbox--wrapper .landscape {
       height: 90%; }
     .devtrac--lighbox .lightbox--wrapper .portrait {
-      width: 100%; }
+      width: 90%; }
   .devtrac--lighbox .lightbox--img {
     vertical-align: middle;
-    margin: 0;
-    height: 90%;
-    width: auto; }
+    margin: 0; }
+  .devtrac--lighbox .portrait .lightbox--img {
+    width: auto;
+    height: 85%; }
+  .devtrac--lighbox .landscape .lightbox--img {
+    height: auto;
+    width: 85%; }
 
 .infobox--hidden {
   transform: translateY(200px); }

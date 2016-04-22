@@ -388,44 +388,30 @@
 	            var winWidth = $('#devtrac').width();
 	            var imgHeight = this.height;
 	            var imgWidth = this.width;
-	            var newHeight = 0, scaledHeight = 0;
-	            var newWidth = 0, scaledWidth = 0;
-	            var maxwidth = '';
 	
 	            if (imgHeight > winHeight) {
-	                newHeight = Math.round(winHeight * .82);
+	                newHeight = winHeight;
 	                newWidth = Math.round((newHeight * imgWidth) / imgHeight);
 	            }
 	
 	            if (imgWidth > winWidth) {
-	                newWidth = Math.round(winWidth * .82);
+	                newWidth = winWidth;
 	                newHeight = Math.round((newWidth * imgHeight) / imgWidth);
-	            }
-	
-	            if (newWidth > winWidth) {
-	                scaledWidth = Math.round(winWidth * .82);
-	                scaledHeight = Math.round((scaledWidth * newHeight) / newWidth);
-	            } else if (imgWidth > winWidth) {
-	                scaledWidth = Math.round(winWidth * .82);
-	                scaledHeight = Math.round((scaledWidth * imgHeight) / imgWidth);
-	            } else {
-	                scaledWidth = newWidth;
-	                scaledHeight = newHeight;
 	            }
 	
 	            if (imgHeight > imgWidth) {
 	                var className = 'portrait';
-	                var style = "height: " + scaledHeight + "px;";
+	                var style = '';
 	            } else {
 	                var className = 'landscape';
-	                var style = "width: " + scaledWidth + "px;";
+	                if (newHeight >= winHeight){
+	                    var style = 'style="height:85%;width:auto"';
+	                } else {
+	                    var style = 'style="width:85%;height:auto"';
+	                }
 	            }
 	
-	            if (scaledWidth !== 0) {
-	                maxwidth = 'style="max-width:'+scaledWidth+'px;"max-height:'+scaledHeight+'px;""'
-	            };
-	
-	            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+maxwidth+' class="lightbox--img" src="'+ imageUrl + '"></div>');
+	            $('.devtrac--lighbox').append('<div  class = "lightbox--wrapper '+className +'" "><img '+style+' class="lightbox--img" src="'+ imageUrl + '"></div>');
 	
 	            $('.lighbox--close').on('click',function() {
 	               lighbox();
@@ -15401,12 +15387,13 @@
 	function debounce(func, wait, options) {
 	  var lastArgs,
 	      lastThis,
+	      maxWait,
 	      result,
 	      timerId,
 	      lastCallTime = 0,
 	      lastInvokeTime = 0,
 	      leading = false,
-	      maxWait = false,
+	      maxing = false,
 	      trailing = true;
 	
 	  if (typeof func != 'function') {
@@ -15415,7 +15402,8 @@
 	  wait = toNumber(wait) || 0;
 	  if (isObject(options)) {
 	    leading = !!options.leading;
-	    maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
+	    maxing = 'maxWait' in options;
+	    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
 	    trailing = 'trailing' in options ? !!options.trailing : trailing;
 	  }
 	
@@ -15443,7 +15431,7 @@
 	        timeSinceLastInvoke = time - lastInvokeTime,
 	        result = wait - timeSinceLastCall;
 	
-	    return maxWait === false ? result : nativeMin(result, maxWait - timeSinceLastInvoke);
+	    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
 	  }
 	
 	  function shouldInvoke(time) {
@@ -15454,7 +15442,7 @@
 	    // trailing edge, the system time has gone backwards and we're treating
 	    // it as the trailing edge, or we've hit the `maxWait` limit.
 	    return (!lastCallTime || (timeSinceLastCall >= wait) ||
-	      (timeSinceLastCall < 0) || (maxWait !== false && timeSinceLastInvoke >= maxWait));
+	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
 	  }
 	
 	  function timerExpired() {
@@ -15503,10 +15491,12 @@
 	      if (timerId === undefined) {
 	        return leadingEdge(lastCallTime);
 	      }
-	      // Handle invocations in a tight loop.
-	      clearTimeout(timerId);
-	      timerId = setTimeout(timerExpired, wait);
-	      return invokeFunc(lastCallTime);
+	      if (maxing) {
+	        // Handle invocations in a tight loop.
+	        clearTimeout(timerId);
+	        timerId = setTimeout(timerExpired, wait);
+	        return invokeFunc(lastCallTime);
+	      }
 	    }
 	    if (timerId === undefined) {
 	      timerId = setTimeout(timerExpired, wait);

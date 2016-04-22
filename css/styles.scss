@@ -504,16 +504,26 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         }
 
         .portrait{
-            width: 100%;
+            width: 90%;
         }
     }
 
     .lightbox--img{
         vertical-align: middle;
         margin: 0;
-        height: 90%;
-        width: auto;
+        
     }
+
+    .portrait .lightbox--img{
+            width: auto;
+            height: 85%;
+        }
+
+    .landscape .lightbox--img{
+            height: auto;
+            width: 85%;
+        }
+
 }
 
 .infobox--hidden {
