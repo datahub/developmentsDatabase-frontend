@@ -237,6 +237,7 @@ var populateMap = function(markers) {
     if (window.firstRun) {
         window.firstRun = false;
         router('go');
+
     }
 }
 
@@ -398,8 +399,8 @@ var setFilters = function(filterOptions) {
 }
 
 var getFilters = function() {
-    filters = {};
-    hash = "";
+    var filters = {};
+    var hash = "";
     $('#devtrac--form input, #devtrac--form select').each(function() {
         name = $(this).prop('name');
         if (this.type === "checkbox") {
@@ -412,26 +413,30 @@ var getFilters = function() {
             hash += "&" + name + "=" + value;
         }
     });
+    _throttle(function(hash) {
+        router('set','/search/' + hash);
+        console.log("hash: " + hash);
+    }, 700, {'leading': false});
     filterPoints(filters);
-    router('set','/search/' + hash);
 }
-$('#devtrac--form input[type=text]').on('keyup',_throttle(getFilters, 500, {'leading': false}));
+//$('#devtrac--form input[type=text]').on('keyup',_throttle(getFilters, 500, {'leading': false}));
+$('#devtrac--form input[type=text]').on('keyup',getFilters);
 $('#devtrac--form input[type=checkbox], #devtrac--form select').on('change',getFilters);
 
 var filterPoints = function(filters) {
-    filteredPts = _filter(devtracPoints.features, function(point) {
+    var filteredPts = _filter(devtracPoints.features, function(point) {
         var props = point.properties;
 
         var search = true, neighborhood = true, developer = true;
 
         // search
         if (filters.search !== "" && props.name.toLowerCase().trim().indexOf(filters.search.toLowerCase().trim()) < 0 ) {
-            var search = false;
+            search = false;
         }
 
         // neightborhood
         if (filters.neighborhood !== "" && props.neighborhood.trim() !== filters.neighborhood.trim()) {
-            var neighborhood = false;
+            neighborhood = false;
         } else {
 
             var center = $('.holder--neighborhoods option[value="'+filters.neighborhood+'"]').data('center');
@@ -445,7 +450,7 @@ var filterPoints = function(filters) {
 
         // developer
         if (filters.developer !== "" && props.developer.toLowerCase().trim().indexOf(filters.developer.toLowerCase().trim()) < 0) {
-            var developer = false;
+            developer = false;
         }
 
         // status
@@ -487,12 +492,16 @@ var filterPoints = function(filters) {
 
     });
 
-    if (filters.search.length > 1 && filteredPts.length > 0) {
+    if (filters.search.length > 0 && filteredPts.length > 0) {
         var list = _map(filteredPts, _property('properties.name'));
         typeahead(filters.search,list);
+        toggleInfoBox();
     } else {
         typeahead();
     }
+
+    // showing count of total
+    updateCount(filteredPts.length,devtracPoints.features.length);
 
     //TODO: refactor to use mapbox layer filters instead of entire map redraw
     clearMap();
@@ -501,7 +510,7 @@ var filterPoints = function(filters) {
 }
 
 var typeahead = function(search, list) {
-    if (list && list.length > 1) {
+    if (list && list.length > 0) {
         searchString = new RegExp(search,'i');
         var results = _map(list, function(val) {
             return '<li>' + val.replace(searchString, '<span>$&</span>') + '</li>';
@@ -518,11 +527,16 @@ $(document).on('click','.filterbox--results li',function() {
     $('#devtrac--form input[type=text]').keyup();
 });
 
+var updateCount = function(count, total) {
+    $('.filterbox--count').html("showing " + count + " of " + total);
+}
+
 var router = function(action,route) {
     if (action === 'set') {
         window.location.hash = route.trim();
     } else if (action === 'go') {
         var hash = window.location.hash.substr(1);
+        updateCount(window.devtracPoints.features.length, window.devtracPoints.features.length);
         if (hash) {
             var paths = hash.split("/").filter(Boolean);
             if (paths[0] === 'development' && paths[1]) {

@@ -182,6 +182,12 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
         line-height: 16px;
         font-size: 24px;
     }
+    .filterbox--count {
+        float: right;
+        font-size: 10px;
+        line-height: 2;
+        color: #777;
+    }
 
     .filterbox--inputwrapper {
         margin-bottom: 12px;
@@ -511,7 +517,7 @@ $downArrow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAI6CAYAAABB4wFZA
     .lightbox--img{
         vertical-align: middle;
         margin: 0;
-        
+
     }
 
     .portrait .lightbox--img{
