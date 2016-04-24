@@ -1,0 +1,166 @@
+<p style="font-size: 15px; font-family: Georgia, 'Times New Roman', Times, serif; line-height: 1.3; border-top: 1px solid #002269; padding: 15px 0 10px 0;">
+The Land & Space Development Tracker follows newly completed and ongoing commercial projects throughout the Milwaukee area. The list includes apartment buildings, shopping centers, office developments, industrial projects and, of course, breweries. Questions? Contact <a href="mailto:tdaykin@jrn.com">tdaykin@jrn.com</a>.
+</p>
+<link href="http://media.dhb.io/projects/2016/Development-Tracker/css/styles.css?v5" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js"></script>
+<style>
+.left_column_wide {padding:0; margin: 10px;}
+#devtrac .pointer {border:0;}
+#devtrac h1,
+#devtrac h2,
+#devtrac h3,
+#devtrac p {font-family:Verdana;}
+#devtrac h1,
+#devtrac h2,
+#devtrac h3 {font-weight: bold;}
+#devtrac .devtrac--filterbox .filterbox--inputwrapper input[type=text] {width: 93%; width: calc(100% - 14px);}
+#devtrac .filterbox--results li {background: #fff;}
+#devtrac .filterbox--results li:hover {background: #e5e5e5;}
+</style>
+<div id="devtrac">
+    <div class="devtrac--map">
+        <div id="devtrac--mapbox"></div>
+    </div>
+    <div class="devtrac--legend animated">
+        <span class="legend--status status--proposed"><span class="legend--circle"></span>Proposed</span>
+        <span class="legend--status status--approved"><span class="legend--circle"></span>Approved</span>
+        <span class="legend--status status--underConstruction"><span class="legend--circle"></span>Under construction</span>
+        <span class="legend--status status--contructionCompleted"><span class="legend--circle"></span>Construction completed</span>
+    </div>
+    <div class="devtrac--fullscreen pointer" title="Fullscreen">
+        <i class="fa fa-expand toggleFullScreen" title="Fullscreen"></i>
+    </div>
+    <div class="devtrac--filterbox animated">
+        <div class="filterbox--inner">
+            <h1 class="filterbox--title pointer toggleFilterBox">Filter developments<i class="fa fa-caret-down animated"></i></h1>
+            <div id="devtrac--form">
+                <div class="filterbox--inputwrapper">
+                    <input type="text" class="search--autocomplete" name="search" placeholder="Search project name" autocomplete="off">
+                    <div class="filterbox--typeahead">
+                        <ul class="filterbox--results"></ul>
+                    </div>
+                </div>
+                <div class="filterbox--inputwrapper filters--usage">
+                    <p class="filterbox--header">Usage</p>
+                    <div class="inputwrapper--twocol">
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" name="commercial" checked="checked" class="pointer">
+                            Commercial
+                        </label>
+                        <br>
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" name="residential" checked="checked" class="pointer">
+                            Residential
+                        </label>
+                        <br>
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" name="mixed" checked="checked" class="pointer">
+                            Mixed
+                        </label>
+                    </div>
+                    <div class="inputwrapper--twocol">
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" name="manufacturing" checked="checked" class="pointer">
+                            Manufacturing
+                        </label>
+                        <br>
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" name="institutional" checked="checked" class="pointer">
+                            Institutional
+                        </label>
+                    </div>
+                </div>
+                <div class="filterbox--inputwrapper filters--status">
+                    <p class="filterbox--header">Project Status<span class="filterbox--count"></span></p>
+                    <div class="inputwrapper--twocol">
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" class="proposed pointer" name="proposed" checked="checked">
+                            Proposed
+                        </label>
+                    </div>
+                    <div class="inputwrapper--twocol">
+                        <label class="inputwrapper--label pointer">
+                            <input type="checkbox" class="approved pointer" name="approved" checked="checked">
+                            Approved
+                        </label>
+                    </div>
+                    <br>
+                    <label class="inputwrapper--label pointer">
+                        <input type="checkbox" class="under pointer" name="underConstruction" checked="checked">
+                        Under Construction
+                    </label>
+                    <br>
+                    <label class="inputwrapper--label pointer">
+                        <input type="checkbox" class="completed pointer" name="constructionCompleted" checked="checked">
+                        Construction Completed
+                    </label>
+                </div>
+                <div class="filterbox--inputwrapper">
+                    <select name="neighborhood" class="holder--neighborhoods pointer">
+                        <option value="" data-center="[-87.9800,43.0500,10]">All Neighborhoods</option>
+                    </select>
+                </div>
+                <div class="filterbox--inputwrapper">
+                    <select name="developer" class="holder--developers pointer">
+                        <option value="">All Developers</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="devtrac--infobox animated infobox--hidden">
+        <div class="infobox--outer"><div class="infobox--inner"></div></div>
+        <i class="fa fa-times-circle pointer infobox--close"></i>
+    </div>
+    <div class="devtrac--touch toggleFullScreen">
+        <div class="touch--wrapper">
+            <i class="fa fa-hand-pointer-o"></i>
+            <br>
+            Touch to interact
+        </div>
+    </div>
+    <div class="devtrac--lighbox">
+        <i class="fa fa-times-circle pointer lighbox--close"></i>
+    </div>
+</div>
+<script type="text/template" id="template--neighborhoods">
+<% _forEach(neighborhoods, function(neighborhood) { %>
+    <option value="<%= neighborhood.name %>" data-center="<%= neighborhood.center %>"><%= neighborhood.name %></option>
+<% }); %>
+</script>
+<script type="text/template" id="template--developers">
+<% _forEach(developers, function(developer) { %>
+    <option value="<%= developer %>"><%= developer %></option>
+<% }); %>
+</script>
+<script type="text/template" id="template--infobox">
+<% if (image !== "") { %>
+<div class="infobox--imagewrap lightbox--open pointer">
+    <img class="imagewrap--image" src="<%= image %>"><span class="imagewrap--status status--<%= status %>"><%= statusNice %></span>
+</div>
+<% } else { %>
+    <div class="infobox--statusbar status--<%= status %>"></div>
+<% } %>
+<div class="infobox--details">
+    <span class="details--estimates desktop--only"><strong><% if (completionDate.indexOf("+") === 0) { %>Est. <% } %>Completion Date: </strong><% print(completionDate.replace("+","")) %><br><strong>Est. Cost: </strong><%= cost %></span>
+    <h3 class="details--name"><%= name %></h3>
+    <p class="details--location"><%= address %> &mdash; <%= neighborhood %></p>
+    <span class="details--estimates mobile--only"><strong><% if (completionDate.indexOf("+") === 0) { %>Est. <% } %>Completion Date: </strong><% print(completionDate.replace("+","")) %><br><strong>Est. Cost: </strong><%= cost %></span>
+    <p class="details--desc"><%= description %></p>
+    <p class="details--who">
+        <% if (developer) { %><span class="details--developer"><strong>Developer: </strong><%= developer %></span><% } %>
+        <% if (architect) { %><span class="details--architect"><strong>Architect: </strong><%= architect %></span><% } %>
+    </p>
+    <% if (coverage && coverage.length > 0) { %>
+    <p class="details--coverage">
+        <strong>Coverage: </strong>
+        <% _forEach(coverage, function(cvg) {  %>
+            <span class="coverage--bullet">•</span><a class="coverage--link" href="<%= cvg.link %>" target="_blank"><%= cvg.headline %></a>
+        <% }); %>
+    </p>
+    <% } %>
+</div>
+</script>
+<script src="http://media.dhb.io/projects/2016/Development-Tracker/js/bundle.js?v4"></script>

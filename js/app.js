@@ -78,20 +78,16 @@ var getCacheData = function() {
             var cacheBust = (window.location.hash.indexOf('fresh') > -1) ? true : false;
 
             var data = JSON.parse(window.localStorage.getItem('devtrac-cache'));
-            var cacheLength = (3600 * 1); // 1 hour in seconds
+            var cacheLength = (3600 * 24); // 1 hour in seconds
             var now = Math.floor(Date.now() / 1000);
 
             if ((now - data.timestamp) < cacheLength && !cacheBust) {
-
-                console.log('using cached data');
 
                 window.devtracPoints = data.locations;
                 populateFilters(data.meta.developers, data.meta.neighborhoods);
                 populateMap(data.locations);
 
             } else {
-
-                console.log('using fresh data');
 
                 $.ajax({
                     url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
@@ -252,10 +248,10 @@ var clearMap = function() {
 
 var toggleFullScreen = function() {
 
-    if ($('.container').hasClass('container--fullscreen')) {
+    if ($('#devtrac').hasClass('container--fullscreen')) {
 
-        $('.toggleFullScreen').removeClass('fa-compress')
-        $('.toggleFullScreen').addClass('fa-expand')
+        $('.toggleFullScreen').removeClass('fa-compress');
+        $('.toggleFullScreen').addClass('fa-expand');
 
 
         if ($(window).width() < 621) {
@@ -268,9 +264,8 @@ var toggleFullScreen = function() {
 
     } else {
 
-
-        $('.toggleFullScreen').addClass('fa-compress')
-        $('.toggleFullScreen').removeClass('fa-expand')
+        $('.toggleFullScreen').addClass('fa-compress');
+        $('.toggleFullScreen').removeClass('fa-expand');
 
         if ($(window).width() < 621) {
             $('.devtrac--touch').hide();
@@ -285,7 +280,7 @@ var toggleFullScreen = function() {
         map.scrollZoom.enable();
 
     }
-    $('.container').toggleClass('container--fullscreen');
+    $('#devtrac').toggleClass('container--fullscreen');
     map.resize();
 
 }
