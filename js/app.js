@@ -1,12 +1,11 @@
 require("../css/styles.scss");
 
-window.$ = require("jquery");
+var $ = require("jquery");
 var _tpl = require("lodash/template");
 var _filter = require("lodash/filter");
 var _find = require("lodash/find");
 var _map = require("lodash/map");
 var _property = require("lodash/property");
-var _throttle = require("lodash/throttle");
 window._forEach = require('lodash/foreach');
 
 $(document).ready(function() {
@@ -50,10 +49,10 @@ map.on('click', function (e) {
     function (err, features) {
 
         if (err || !features.length) {
-            toggleInfoBox();
+            toggleInfoBox(false, false);
             return;
         }
-        toggleInfoBox(features[0]);
+        toggleInfoBox(features[0], true);
 
     });
 
@@ -233,7 +232,6 @@ var populateMap = function(markers) {
     if (window.firstRun) {
         window.firstRun = false;
         router('go');
-
     }
 }
 
@@ -286,7 +284,7 @@ var toggleFullScreen = function() {
 }
 $('.toggleFullScreen').on('click',function(){toggleFullScreen()});
 
-var toggleInfoBox = function(data) {
+var toggleInfoBox = function(data, clickStatus) {
     if (data) {
 
         highlightPt(data.geometry);
@@ -298,7 +296,7 @@ var toggleInfoBox = function(data) {
         $('.devtrac--infobox').removeClass('infobox--hidden');
 
         $('.infobox--close').on('click',function() {
-           toggleInfoBox();
+           toggleInfoBox(false, true);
         });
 
         if ($(window).width() > 620) {
@@ -306,8 +304,9 @@ var toggleInfoBox = function(data) {
                lighbox($('.imagewrap--image').attr('src'));
             });
         }
-
-        router('set','/development/' + data.properties.id);
+        if (clickStatus) {
+            router('set','/development/' + data.properties.id);
+        }
 
     } else {
 
@@ -319,8 +318,9 @@ var toggleInfoBox = function(data) {
         if ($(window).width() > 620) {
             $('.lighbox--open').unbind('click');
         }
-
-        router('set','');
+        if (clickStatus) {
+            router('set','');
+        }
 
     }
 }
@@ -394,7 +394,7 @@ var setFilters = function(filterOptions) {
     }
 }
 
-var getFilters = function() {
+var getFilters = function(fromTypeahead) {
     var filters = {};
     var hash = "";
     $('#devtrac--form input, #devtrac--form select').each(function() {
@@ -409,17 +409,16 @@ var getFilters = function() {
             hash += "&" + name + "=" + value;
         }
     });
-    _throttle(function(hash) {
-        router('set','/search/' + hash);
-        console.log("hash: " + hash);
-    }, 700, {'leading': false});
-    filterPoints(filters);
+    if (fromTypeahead !== true) {
+        var fromTypeahead = false;
+    }
+    filterPoints(filters,fromTypeahead);
+    router('set','/search/' + hash);
 }
-//$('#devtrac--form input[type=text]').on('keyup',_throttle(getFilters, 500, {'leading': false}));
 $('#devtrac--form input[type=text]').on('keyup',getFilters);
 $('#devtrac--form input[type=checkbox], #devtrac--form select').on('change',getFilters);
 
-var filterPoints = function(filters) {
+var filterPoints = function(filters,fromTypeahead) {
     var filteredPts = _filter(devtracPoints.features, function(point) {
         var props = point.properties;
 
@@ -487,16 +486,17 @@ var filterPoints = function(filters) {
         return (search && neighborhood && developer && status && usage);
 
     });
-
-    if (filters.search.length > 0 && filteredPts.length > 0) {
+    if (fromTypeahead !== true) {
+        var fromTypeahead = false;
+    }
+    if (filters.search.length > 0 && filteredPts.length > 0 && !fromTypeahead) {
         var list = _map(filteredPts, _property('properties.name'));
         typeahead(filters.search,list);
-        toggleInfoBox();
+        toggleInfoBox(false, false);
     } else {
         typeahead();
     }
 
-    // showing count of total
     updateCount(filteredPts.length,devtracPoints.features.length);
 
     //TODO: refactor to use mapbox layer filters instead of entire map redraw
@@ -520,7 +520,7 @@ var typeahead = function(search, list) {
 }
 $(document).on('click','.filterbox--results li',function() {
     $('.search--autocomplete').prop('value',$(this).text());
-    $('#devtrac--form input[type=text]').keyup();
+    getFilters(true);
 });
 
 var updateCount = function(count, total) {
@@ -529,9 +529,9 @@ var updateCount = function(count, total) {
 
 var router = function(action,route) {
     if (action === 'set') {
-        window.location.hash = route.trim();
+        window.location.hash = encodeURI(route.trim());
     } else if (action === 'go') {
-        var hash = window.location.hash.substr(1);
+        var hash = decodeURI(window.location.hash.substr(1));
         updateCount(window.devtracPoints.features.length, window.devtracPoints.features.length);
         if (hash) {
             var paths = hash.split("/").filter(Boolean);
@@ -540,8 +540,8 @@ var router = function(action,route) {
                 if (development) {
                     setTimeout(function() {
                         map.flyTo({center: development.geometry.coordinates, zoom:16});
-                        toggleInfoBox(development);
-                    }, 500);
+                        toggleInfoBox(development, false);
+                    }, 800);
                 }
             } else if (paths[0] === 'search' && paths[1]) {
                 var hashFilters = paths[1].split("&").filter(Boolean);
@@ -560,7 +560,6 @@ var router = function(action,route) {
                     'underConstruction': true,
                     'constructionCompleted': true
                 };
-
                 _forEach(hashFilters, function(filter) {
                     var filterParts = filter.split("=");
                     if ($.inArray(filterParts[0],filterOptions) > -1) {
