@@ -35,7 +35,7 @@ map.addControl(new mapboxgl.Navigation({position: 'top-right'}));
 
 map.on('style.load', function () {
 
-    getCacheData();
+    getData();
 
 });
 
@@ -68,81 +68,18 @@ map.on('mousemove', function (e) {
     });
 });
 
-//TODO: clean up this functon
-var getCacheData = function() {
-    if (window.localStorage) {
-
-        if (window.localStorage.getItem('devtrac-cache')) {
-
-            var cacheBust = (window.location.hash.indexOf('fresh') > -1) ? true : false;
-
-            var data = JSON.parse(window.localStorage.getItem('devtrac-cache'));
-            var cacheLength = (3600 * 24); // 1 hour in seconds
-            var now = Math.floor(Date.now() / 1000);
-
-            if ((now - data.timestamp) < cacheLength && !cacheBust) {
-
-                window.devtracPoints = data.locations;
-                populateFilters(data.meta.developers, data.meta.neighborhoods);
-                populateMap(data.locations);
-
-            } else {
-
-                $.ajax({
-                    url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-                    jsonpCallback: 'preData',
-                    dataType: 'jsonp',
-                    crossDomain: true,
-                    success: function(data) {
-                        window.devtracPoints = data.locations;
-                        populateFilters(data.meta.developers, data.meta.neighborhoods);
-                        populateMap(data.locations);
-                        var storageString = JSON.stringify({
-                            timestamp : Math.floor(Date.now() / 1000),
-                            locations : data.locations,
-                            meta : data.meta,
-                        });
-                        window.localStorage.setItem('devtrac-cache',storageString);
-                    }
-                });
-
-            }
-
-        } else {
-
-            $.ajax({
-                url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-                jsonpCallback: 'preData',
-                dataType: 'jsonp',
-                crossDomain: true,
-                success: function(data) {
-                    window.devtracPoints = data.locations;
-                    populateFilters(data.meta.developers, data.meta.neighborhoods);
-                    populateMap(data.locations);
-                    var storageString = JSON.stringify({
-                        timestamp : Math.floor(Date.now() / 1000),
-                        locations : data.locations,
-                        meta : data.meta,
-                    });
-                    window.localStorage.setItem('devtrac-cache',storageString);
-                }
-            });
-
+var getData = function() {
+    $.ajax({
+        url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
+        jsonpCallback: 'preData',
+        dataType: 'jsonp',
+        crossDomain: true,
+        success: function(data) {
+            window.devtracPoints = data.locations;
+            populateFilters(data.meta.developers, data.meta.neighborhoods);
+            populateMap(data.locations);
         }
-
-    } else {
-        $.ajax({
-            url: 'http://brick1.dhb.io/api/developments/?spaceless=true',
-            jsonpCallback: 'preData',
-            dataType: 'jsonp',
-            crossDomain: true,
-            success: function(data) {
-                populateFilters(data.meta.developers, data.meta.neighborhoods);
-                populateMap(data.locations);
-                window.devtracPoints = data.locations;
-            }
-        });
-    }
+    });
 }
 
 var highlightPt = function(geo) {
